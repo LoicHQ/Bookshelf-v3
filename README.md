@@ -1,36 +1,114 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+﻿# BookShelf v3 ðŸ“š
 
-## Getting Started
+Votre bibliothÃ¨que personnelle - GÃ©rez, notez et partagez vos lectures.
 
-First, run the development server:
+## FonctionnalitÃ©s
+
+- **Gestion de bibliothÃ¨que** - Ajoutez, organisez et notez vos livres
+- **Recherche par ISBN** - Ajoutez des livres via leur code ISBN depuis les APIs web
+- **Interface simple** - UI moderne et intuitive
+- **Authentification** - Connexion via Google, GitHub ou email
+
+## Tech Stack
+
+- **Framework**: Next.js 16 (App Router)
+- **Langage**: TypeScript
+- **Base de donnÃ©es**: PostgreSQL (Supabase)
+- **ORM**: Prisma
+- **Auth**: NextAuth.js v5
+- **UI**: Tailwind CSS + shadcn/ui
+- **Tests**: Vitest + Testing Library
+
+## PrÃ©requis
+
+- Node.js 20+
+- npm ou yarn
+- Compte Supabase avec base de donnÃ©es PostgreSQL
+
+## Installation
+
+1. **Cloner le repository**
+
+```bash
+git clone https://github.com/LoicHQ/Bookshelf-v3.git
+cd Bookshelf-v3
+```
+
+2. **Installer les dÃ©pendances**
+
+```bash
+npm install
+```
+
+3. **Configurer les variables d'environnement**
+
+```bash
+cp .env.example .env.local
+```
+
+Remplissez les valeurs dans `.env.local` :
+
+- `DATABASE_URL` : Connection string Supabase PostgreSQL
+- `NEXTAUTH_SECRET` : GÃ©nÃ©rez avec `openssl rand -base64 32`
+- `NEXTAUTH_URL` : URL de l'application (http://localhost:3000 en dev)
+- OAuth providers (optionnel)
+- `GOOGLE_BOOKS_API_KEY` (optionnel mais recommandÃ©)
+
+4. **Initialiser la base de donnÃ©es**
+
+```bash
+npm run db:push
+```
+
+5. **Lancer le serveur de dÃ©veloppement**
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Ouvrez [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts disponibles
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Commande             | Description                           |
+| -------------------- | ------------------------------------- |
+| `npm run dev`        | Serveur de dÃ©veloppement (Turbopack) |
+| `npm run build`      | Build de production                   |
+| `npm run start`      | DÃ©marrer en production               |
+| `npm run lint`       | Linter ESLint                         |
+| `npm run type-check` | VÃ©rification des types TypeScript    |
+| `npm run format`     | Formater avec Prettier                |
+| `npm run test`       | Lancer les tests                      |
+| `npm run db:studio`  | Ouvrir Prisma Studio                  |
 
-## Learn More
+## Structure du projet
 
-To learn more about Next.js, take a look at the following resources:
+```
+bookshelf-v3/
+â”œâ”€â”€ app/                    # Routes Next.js (App Router)
+â”‚   â”œâ”€â”€ api/                # Routes API
+â”‚   â”œâ”€â”€ dashboard/          # Page dashboard
+â”‚   â”œâ”€â”€ login/              # Page de connexion
+â”‚   â”œâ”€â”€ add-book/           # Page d'ajout de livre
+â”‚   â””â”€â”€ library/            # Page bibliothÃ¨que
+â”œâ”€â”€ src/
+â”‚   â”œâ”€â”€ components/         # Composants React
+â”‚   â”‚   â”œâ”€â”€ ui/             # Composants shadcn/ui
+â”‚   â”‚   â””â”€â”€ books/          # Composants livres
+â”‚   â”œâ”€â”€ lib/                # Utilitaires et configurations
+â”‚   â””â”€â”€ types/              # Types TypeScript
+â”œâ”€â”€ prisma/                 # SchÃ©ma Prisma
+â””â”€â”€ tests/                  # Tests
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## DÃ©ploiement
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Vercel (recommandÃ©)
 
-## Deploy on Vercel
+1. Connectez votre repository GitHub Ã  Vercel
+2. Configurez les variables d'environnement
+3. DÃ©ployez !
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Licence
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT
