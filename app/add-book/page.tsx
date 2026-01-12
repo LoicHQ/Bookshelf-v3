@@ -66,57 +66,58 @@ export default function AddBookPage() {
   };
 
   return (
-    <div className="container mx-auto max-w-2xl p-6">
-      <div className="mb-8">
-        <h1 className="mb-2 text-3xl font-bold">Ajouter un livre</h1>
-        <p className="text-muted-foreground">Recherchez un livre par son code ISBN</p>
+    <div className="container mx-auto max-w-2xl p-6 pb-24">
+      <div className="mb-8 space-y-2">
+        <h1 className="text-4xl font-bold tracking-tight">Ajouter un livre</h1>
+        <p className="text-muted-foreground text-lg">Recherchez un livre par son code ISBN</p>
       </div>
 
-      <Card>
+      <Card className="shadow-lg">
         <CardHeader>
           <CardTitle>Recherche par ISBN</CardTitle>
           <CardDescription>Entrez le code ISBN-10 ou ISBN-13 du livre</CardDescription>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSearch} className="space-y-4">
-            <div className="flex gap-2">
+        <CardContent className="space-y-5">
+          <form onSubmit={handleSearch} className="space-y-5">
+            <div className="flex gap-3">
               <Input
                 type="text"
                 placeholder="978-2-1234-5678-9"
                 value={isbn}
                 onChange={(e) => setIsbn(e.target.value)}
                 disabled={loading}
+                className="flex-1"
               />
-              <Button type="submit" disabled={loading || !isbn}>
+              <Button type="submit" disabled={loading || !isbn} size="icon" className="h-14 w-14">
                 {loading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <Loader2 className="h-5 w-5 animate-spin" />
                 ) : (
-                  <Search className="h-4 w-4" />
+                  <Search className="h-5 w-5" />
                 )}
               </Button>
             </div>
             {error && (
-              <div className="rounded-md bg-red-50 p-3 text-sm text-red-800 dark:bg-red-900/20 dark:text-red-400">
+              <div className="rounded-2xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 p-4 text-[15px] text-red-600 dark:text-red-400">
                 {error}
               </div>
             )}
           </form>
 
           {book && (
-            <div className="mt-6 space-y-4">
+            <div className="space-y-5 pt-4 border-t border-border/50">
               <div>
                 <h3 className="mb-4 text-lg font-semibold">Livre trouvé :</h3>
                 <BookCard book={book} showStatus={false} showRating={false} />
               </div>
-              <Button onClick={handleAdd} disabled={loading} className="w-full">
+              <Button onClick={handleAdd} disabled={loading} className="w-full" size="lg">
                 {loading ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                     Ajout en cours...
                   </>
                 ) : (
                   <>
-                    <Plus className="mr-2 h-4 w-4" />
+                    <Plus className="mr-2 h-5 w-5" />
                     Ajouter à ma bibliothèque
                   </>
                 )}

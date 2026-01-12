@@ -125,7 +125,7 @@ export default function LoginPage() {
         // Connexion
         const result = await signIn('credentials', {
           email,
-          password: 'dev', // Mot de passe factice pour le développement
+          password: 'dev',
           redirect: false,
         });
 
@@ -144,111 +144,125 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold">
-            {isSignUp ? 'Créer un compte' : 'Connexion'}
-          </CardTitle>
-          <CardDescription>
-            {isSignUp
-              ? 'Créez votre compte BookShelf'
-              : 'Connectez-vous à votre bibliothèque BookShelf'}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {error && (
-              <div className="rounded-md bg-red-50 p-3 text-sm text-red-800 dark:bg-red-900/20 dark:text-red-400">
-                {error}
-              </div>
-            )}
-            {success && (
-              <div className="rounded-md bg-green-50 p-3 text-sm text-green-800 dark:bg-green-900/20 dark:text-green-400">
-                {success}
-              </div>
-            )}
-            {isSignUp && (
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-background to-secondary/30 p-4">
+      <div className="w-full max-w-md space-y-6">
+        <div className="text-center space-y-2 mb-8">
+          <h1 className="text-4xl font-bold tracking-tight">
+            BookShelf
+          </h1>
+          <p className="text-muted-foreground text-lg">
+            Votre bibliothèque personnelle
+          </p>
+        </div>
+
+        <Card className="shadow-lg">
+          <CardHeader className="space-y-1 pb-6">
+            <CardTitle className="text-2xl font-bold text-center">
+              {isSignUp ? 'Créer un compte' : 'Connexion'}
+            </CardTitle>
+            <CardDescription className="text-center">
+              {isSignUp
+                ? 'Créez votre compte BookShelf'
+                : 'Connectez-vous à votre bibliothèque BookShelf'}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-5">
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {error && (
+                <div className="rounded-2xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 p-4 text-sm text-red-600 dark:text-red-400">
+                  {error}
+                </div>
+              )}
+              {success && (
+                <div className="rounded-2xl bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-900/50 p-4 text-sm text-green-600 dark:text-green-400">
+                  {success}
+                </div>
+              )}
+              {isSignUp && (
+                <div className="space-y-2">
+                  <label htmlFor="name" className="text-[15px] font-medium text-foreground/80">
+                    Nom (optionnel)
+                  </label>
+                  <Input
+                    id="name"
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Votre nom"
+                  />
+                </div>
+              )}
               <div className="space-y-2">
-                <label htmlFor="name" className="text-sm font-medium">
-                  Nom (optionnel)
+                <label htmlFor="email" className="text-[15px] font-medium text-foreground/80">
+                  Email
                 </label>
                 <Input
-                  id="name"
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Votre nom"
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  placeholder="votre@email.com"
                 />
               </div>
-            )}
-            <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium">
-                Email
-              </label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                placeholder="votre@email.com"
-              />
-            </div>
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading
-                ? isSignUp
-                  ? 'Création...'
-                  : 'Connexion...'
-                : isSignUp
-                  ? 'Créer le compte'
-                  : 'Se connecter'}
-            </Button>
-          </form>
-          <div className="mt-4 space-y-2">
-            <div className="text-center text-sm">
-              <button
-                type="button"
-                onClick={() => {
-                  setIsSignUp(!isSignUp);
-                  setError('');
-                  setSuccess('');
-                }}
-                className="text-primary hover:underline"
-              >
-                {isSignUp
-                  ? 'Déjà un compte ? Se connecter'
-                  : "Pas de compte ? S'inscrire"}
-              </button>
-            </div>
-            {!isSignUp && (
-              <Button
-                variant="outline"
-                className="w-full"
-                type="button"
-                onClick={createTestAccount}
-                disabled={loading}
-              >
-                Créer un compte de test
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading
+                  ? isSignUp
+                    ? 'Création...'
+                    : 'Connexion...'
+                  : isSignUp
+                    ? 'Créer le compte'
+                    : 'Se connecter'}
               </Button>
-            )}
-            <div className="relative my-4">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
+            </form>
+
+            <div className="space-y-4">
+              <div className="text-center">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsSignUp(!isSignUp);
+                    setError('');
+                    setSuccess('');
+                  }}
+                  className="text-primary text-[15px] font-medium hover:opacity-80 transition-opacity"
+                >
+                  {isSignUp
+                    ? 'Déjà un compte ? Se connecter'
+                    : "Pas de compte ? S'inscrire"}
+                </button>
               </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">Ou continuer avec</span>
+              {!isSignUp && (
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  type="button"
+                  onClick={createTestAccount}
+                  disabled={loading}
+                >
+                  Créer un compte de test
+                </Button>
+              )}
+              <div className="relative my-6">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-border/50" />
+                </div>
+                <div className="relative flex justify-center text-xs">
+                  <span className="bg-card px-4 text-muted-foreground">Ou continuer avec</span>
+                </div>
+              </div>
+              <div className="space-y-3">
+                <Button variant="outline" className="w-full" onClick={() => signIn('google')}>
+                  Continuer avec Google
+                </Button>
+                <Button variant="outline" className="w-full" onClick={() => signIn('github')}>
+                  Continuer avec GitHub
+                </Button>
               </div>
             </div>
-            <Button variant="outline" className="w-full" onClick={() => signIn('google')}>
-              Continuer avec Google
-            </Button>
-            <Button variant="outline" className="w-full" onClick={() => signIn('github')}>
-              Continuer avec GitHub
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

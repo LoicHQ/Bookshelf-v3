@@ -9,7 +9,7 @@ export function AppWrapper({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <div className={showBottomNav ? 'pb-20' : ''}>{children}</div>
+      <div className={showBottomNav ? 'pb-24' : ''}>{children}</div>
       {showBottomNav && <BottomNav />}
     </>
   );
