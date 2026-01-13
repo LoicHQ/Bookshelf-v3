@@ -1,16 +1,16 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { BottomNav } from './BottomNav';
+import { TabBar } from './TabBar';
 
 export function AppWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const showBottomNav = pathname !== '/login';
+  const hideNav = pathname === '/login' || pathname === '/register';
 
   return (
     <>
-      <div className={showBottomNav ? 'pb-24' : ''}>{children}</div>
-      {showBottomNav && <BottomNav />}
+      <main className={hideNav ? '' : 'pb-20'}>{children}</main>
+      {!hideNav && <TabBar />}
     </>
   );
 }

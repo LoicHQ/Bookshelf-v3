@@ -26,6 +26,8 @@ model User {
   accounts      Account[]
   sessions      Session[]
   books         UserBook[]
+  collections   Collection[]
+  readingGoals  ReadingGoal[]
 }
 
 model Account {
@@ -91,27 +93,33 @@ model Book {
 }
 
 model UserBook {
-  id        String     @id @default(cuid())
-  userId    String
-  bookId    String
-  status    BookStatus @default(TO_READ)
-  rating    Int? // 1-5 étoiles
-  notes     String?    @db.Text
-  review    String?    @db.Text
-  startDate DateTime?
-  endDate   DateTime?
-  favorite  Boolean    @default(false)
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  id          String     @id @default(cuid())
+  userId      String
+  bookId      String
+  status      BookStatus @default(TO_READ)
+  rating      Int? // 1-5 étoiles
+  notes       String?    @db.Text
+  review      String?    @db.Text
+  startDate   DateTime?
+  endDate     DateTime?
+  favorite    Boolean    @default(false)
+  currentPage Int?       // Page actuelle de lecture
+  isWishlist  Boolean    @default(false) // Liste de souhaits
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 
   // Relations
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book            Book              @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  bookNotes       BookNote[]
+  readingSessions ReadingSession[]
+  collectionBooks CollectionBook[]
 
   @@unique([userId, bookId])
   @@index([userId])
   @@index([bookId])
   @@index([status])
+  @@index([isWishlist])
 }
 
 enum BookStatus {
@@ -120,4 +128,98 @@ enum BookStatus {
   COMPLETED
   ABANDONED
   ON_HOLD
+}
+
+// ============================================================================
+// COLLECTIONS
+// ============================================================================
+
+model Collection {
+  id        String   @id @default(cuid())
+  name      String
+  emoji     String?  // Emoji pour identifier la collection
+  color     String?  // Couleur hex de la collection
+  userId    String
+  order     Int      @default(0) // Pour le tri drag & drop
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user  User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  books CollectionBook[]
+
+  @@index([userId])
+  @@index([order])
+}
+
+model CollectionBook {
+  id           String   @id @default(cuid())
+  collectionId String
+  userBookId   String
+  order        Int      @default(0)
+  addedAt      DateTime @default(now())
+
+  // Relations
+  collection Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  userBook   UserBook   @relation(fields: [userBookId], references: [id], onDelete: Cascade)
+
+  @@unique([collectionId, userBookId])
+  @@index([collectionId])
+  @@index([userBookId])
+}
+
+// ============================================================================
+// READING GOALS & TRACKING
+// ============================================================================
+
+model ReadingGoal {
+  id        String   @id @default(cuid())
+  userId    String
+  year      Int      // Année de l'objectif
+  target    Int      // Nombre de livres à lire
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, year])
+  @@index([userId])
+}
+
+model BookNote {
+  id         String   @id @default(cuid())
+  userBookId String
+  content    String   @db.Text
+  page       Int?     // Page de référence
+  type       NoteType @default(NOTE)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  userBook UserBook @relation(fields: [userBookId], references: [id], onDelete: Cascade)
+
+  @@index([userBookId])
+  @@index([type])
+}
+
+enum NoteType {
+  NOTE      // Note personnelle
+  QUOTE     // Citation du livre
+  HIGHLIGHT // Passage surligné
+}
+
+model ReadingSession {
+  id         String   @id @default(cuid())
+  userBookId String
+  pagesRead  Int      // Nombre de pages lues
+  duration   Int?     // Durée en minutes
+  date       DateTime @default(now())
+  createdAt  DateTime @default(now())
+
+  // Relations
+  userBook UserBook @relation(fields: [userBookId], references: [id], onDelete: Cascade)
+
+  @@index([userBookId])
+  @@index([date])
 }

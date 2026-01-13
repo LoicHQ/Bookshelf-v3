@@ -1,44 +1,198 @@
 @import 'tailwindcss';
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ============================================================================
+   iOS-INSPIRED DESIGN SYSTEM - BookShelf v2
+   ============================================================================ */
 
 :root {
-  --background: #f5f5f7;
-  --foreground: #1d1d1f;
+  /* iOS System Colors - Light Mode */
+  --background: #f2f2f7;
+  --foreground: #1c1c1e;
   --card: #ffffff;
-  --card-foreground: #1d1d1f;
-  --border: rgba(0, 0, 0, 0.1);
-  --muted: #86868b;
-  --muted-foreground: #86868b;
+  --card-foreground: #1c1c1e;
+  --popover: #ffffff;
+  --popover-foreground: #1c1c1e;
+  
+  /* Primary - iOS Blue */
   --primary: #007aff;
   --primary-foreground: #ffffff;
+  
+  /* Secondary & Accents */
   --secondary: #f2f2f7;
+  --secondary-foreground: #1c1c1e;
   --accent: #f2f2f7;
+  --accent-foreground: #1c1c1e;
+  --muted: #f2f2f7;
+  --muted-foreground: #8e8e93;
+  
+  /* Semantic Colors */
+  --destructive: #ff3b30;
+  --destructive-foreground: #ffffff;
+  --success: #34c759;
+  --success-foreground: #ffffff;
+  --warning: #ff9500;
+  --warning-foreground: #ffffff;
+  --info: #5ac8fa;
+  --info-foreground: #1c1c1e;
+  
+  /* Borders & Inputs */
+  --border: rgba(60, 60, 67, 0.12);
+  --input: rgba(60, 60, 67, 0.12);
+  --ring: #007aff;
+  
+  /* Radius - iOS rounded corners */
+  --radius: 0.75rem;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 2rem;
+  --radius-full: 9999px;
+  
+  /* Chart Colors */
+  --chart-1: #007aff;
+  --chart-2: #34c759;
+  --chart-3: #ff9500;
+  --chart-4: #af52de;
+  --chart-5: #ff2d55;
+  
+  /* Sidebar */
+  --sidebar: #f2f2f7;
+  --sidebar-foreground: #1c1c1e;
+  --sidebar-primary: #007aff;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #e5e5ea;
+  --sidebar-accent-foreground: #1c1c1e;
+  --sidebar-border: rgba(60, 60, 67, 0.12);
+  --sidebar-ring: #007aff;
+  
+  /* Status Colors */
+  --status-to-read: #8e8e93;
+  --status-reading: #ff9500;
+  --status-completed: #34c759;
+  --status-abandoned: #ff3b30;
+  --status-on-hold: #5ac8fa;
+}
+
+/* Dark Mode - iOS Dark */
+.dark {
+  --background: #000000;
+  --foreground: #ffffff;
+  --card: #1c1c1e;
+  --card-foreground: #ffffff;
+  --popover: #2c2c2e;
+  --popover-foreground: #ffffff;
+  
+  --primary: #0a84ff;
+  --primary-foreground: #ffffff;
+  
+  --secondary: #2c2c2e;
+  --secondary-foreground: #ffffff;
+  --accent: #2c2c2e;
+  --accent-foreground: #ffffff;
+  --muted: #2c2c2e;
+  --muted-foreground: #98989d;
+  
+  --destructive: #ff453a;
+  --destructive-foreground: #ffffff;
+  --success: #30d158;
+  --success-foreground: #ffffff;
+  --warning: #ff9f0a;
+  --warning-foreground: #1c1c1e;
+  --info: #64d2ff;
+  --info-foreground: #1c1c1e;
+  
+  --border: rgba(255, 255, 255, 0.1);
+  --input: rgba(255, 255, 255, 0.1);
+  --ring: #0a84ff;
+  
+  --chart-1: #0a84ff;
+  --chart-2: #30d158;
+  --chart-3: #ff9f0a;
+  --chart-4: #bf5af2;
+  --chart-5: #ff375f;
+  
+  --sidebar: #1c1c1e;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #0a84ff;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #3a3a3c;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: rgba(255, 255, 255, 0.1);
+  --sidebar-ring: #0a84ff;
+  
+  --status-to-read: #98989d;
+  --status-reading: #ff9f0a;
+  --status-completed: #30d158;
+  --status-abandoned: #ff453a;
+  --status-on-hold: #64d2ff;
 }
 
 @theme inline {
+  /* Colors */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  
+  /* Typography - SF Pro */
   --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Segoe UI', system-ui, sans-serif;
-  --font-mono: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+  --font-mono: 'SF Mono', ui-monospace, Monaco, 'Cascadia Code', monospace;
+  
+  /* Radius */
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-2xl: var(--radius-2xl);
+  --radius-3xl: var(--radius-3xl);
+  --radius-4xl: var(--radius-full);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #000000;
-    --foreground: #f5f5f7;
-    --card: #1c1c1e;
-    --card-foreground: #f5f5f7;
-    --border: rgba(255, 255, 255, 0.1);
-    --muted: #8e8e93;
-    --muted-foreground: #8e8e93;
-    --primary: #0a84ff;
-    --primary-foreground: #ffffff;
-    --secondary: #2c2c2e;
-    --accent: #2c2c2e;
-  }
-}
+/* ============================================================================
+   BASE STYLES
+   ============================================================================ */
 
 * {
   -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: none;
 }
 
 body {
@@ -49,39 +203,70 @@ body {
   -moz-osx-font-smoothing: grayscale;
   font-feature-settings: 'kern' 1;
   text-rendering: optimizeLegibility;
+  min-height: 100dvh;
+  overscroll-behavior: none;
 }
 
-/* Smooth scrolling iOS style */
-html {
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
-}
+/* ============================================================================
+   iOS BLUR EFFECTS
+   ============================================================================ */
 
-/* iOS-style blur effect */
 .backdrop-blur-ios {
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(255, 255, 255, 0.72);
 }
 
-@media (prefers-color-scheme: dark) {
-  .backdrop-blur-ios {
-    background-color: rgba(28, 28, 30, 0.8);
-  }
+.dark .backdrop-blur-ios {
+  background-color: rgba(28, 28, 30, 0.72);
 }
 
-/* Safe area insets for iOS */
+.glass-card {
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  background-color: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.dark .glass-card {
+  background-color: rgba(44, 44, 46, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ============================================================================
+   SAFE AREA INSETS
+   ============================================================================ */
+
+.safe-area-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.safe-area-left {
+  padding-left: env(safe-area-inset-left);
+}
+
+.safe-area-right {
+  padding-right: env(safe-area-inset-right);
+}
+
 .safe-area-inset-bottom {
   padding-bottom: env(safe-area-inset-bottom);
 }
 
 @supports (padding: max(0px)) {
   .safe-area-inset-bottom {
-    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
   }
 }
 
-/* Hide scrollbar but keep functionality */
+/* ============================================================================
+   SCROLLBAR STYLES
+   ============================================================================ */
+
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -89,4 +274,414 @@ html {
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+/* Thin scrollbar for desktop */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--muted) transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: var(--muted);
+  border-radius: 3px;
+}
+
+/* ============================================================================
+   iOS-STYLE ANIMATIONS
+   ============================================================================ */
+
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-down {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes scale-in {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes scale-out {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+}
+
+@keyframes bounce-in {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Animation utility classes */
+.animate-slide-up {
+  animation: slide-up 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.animate-slide-down {
+  animation: slide-down 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+.animate-fade-out {
+  animation: fade-out 0.3s ease-out;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.animate-bounce-in {
+  animation: bounce-in 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--muted) 0%,
+    var(--background) 50%,
+    var(--muted) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* ============================================================================
+   iOS-STYLE COMPONENTS
+   ============================================================================ */
+
+/* iOS Segmented Control */
+.segmented-control {
+  display: inline-flex;
+  background: var(--secondary);
+  border-radius: var(--radius-lg);
+  padding: 2px;
+  gap: 2px;
+}
+
+.segmented-control-item {
+  padding: 0.5rem 1rem;
+  border-radius: calc(var(--radius-lg) - 2px);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--muted-foreground);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.segmented-control-item.active {
+  background: var(--card);
+  color: var(--foreground);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* iOS List Item */
+.list-item-ios {
+  display: flex;
+  align-items: center;
+  padding: 0.875rem 1rem;
+  background: var(--card);
+  transition: background 0.15s ease;
+}
+
+.list-item-ios:active {
+  background: var(--secondary);
+}
+
+/* iOS Card */
+.card-ios {
+  background: var(--card);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+/* iOS Large Title */
+.title-large {
+  font-size: 2.125rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+/* iOS Navigation Title */
+.title-nav {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* iOS Body Text */
+.text-body {
+  font-size: 1rem;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+}
+
+/* iOS Caption */
+.text-caption {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  letter-spacing: 0;
+}
+
+/* ============================================================================
+   TAB BAR STYLES
+   ============================================================================ */
+
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  background-color: rgba(255, 255, 255, 0.72);
+  border-top: 0.5px solid var(--border);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.dark .tab-bar {
+  background-color: rgba(28, 28, 30, 0.72);
+}
+
+.tab-bar-content {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 49px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 4px 12px;
+  color: var(--muted-foreground);
+  transition: color 0.2s ease, transform 0.15s ease;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tab-item:active {
+  transform: scale(0.92);
+}
+
+.tab-item.active {
+  color: var(--primary);
+}
+
+.tab-item-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.tab-item-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+/* Scanner Tab (Center) */
+.tab-item-scanner {
+  position: relative;
+}
+
+.tab-item-scanner-button {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.4);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.tab-item-scanner-button:active {
+  transform: scale(0.92);
+  box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
+}
+
+/* ============================================================================
+   PULL TO REFRESH
+   ============================================================================ */
+
+.pull-to-refresh {
+  position: absolute;
+  top: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pull-to-refresh-spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--muted);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============================================================================
+   STATUS BADGE COLORS
+   ============================================================================ */
+
+.status-to-read {
+  background: var(--status-to-read);
+  color: white;
+}
+
+.status-reading {
+  background: var(--status-reading);
+  color: white;
+}
+
+.status-completed {
+  background: var(--status-completed);
+  color: white;
+}
+
+.status-abandoned {
+  background: var(--status-abandoned);
+  color: white;
+}
+
+.status-on-hold {
+  background: var(--status-on-hold);
+  color: var(--foreground);
+}
+
+/* ============================================================================
+   HAPTIC FEEDBACK (Visual)
+   ============================================================================ */
+
+.haptic-light:active {
+  transform: scale(0.98);
+}
+
+.haptic-medium:active {
+  transform: scale(0.96);
+}
+
+.haptic-heavy:active {
+  transform: scale(0.94);
+}
+
+/* ============================================================================
+   BASE LAYER
+   ============================================================================ */
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }

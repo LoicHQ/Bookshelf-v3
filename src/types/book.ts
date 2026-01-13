@@ -1,4 +1,4 @@
-﻿export type BookStatus = 'TO_READ' | 'READING' | 'COMPLETED' | 'ABANDONED' | 'ON_HOLD';
+export type BookStatus = 'TO_READ' | 'READING' | 'COMPLETED' | 'ABANDONED' | 'ON_HOLD';
 
 export interface Book {
   id: string;
@@ -30,9 +30,52 @@ export interface UserBook {
   startDate?: Date | null;
   endDate?: Date | null;
   favorite: boolean;
+  currentPage?: number | null;
+  isWishlist: boolean;
   createdAt: Date;
   updatedAt: Date;
   book?: Book;
+}
+
+export type NoteType = 'NOTE' | 'QUOTE' | 'HIGHLIGHT';
+
+export interface BookNote {
+  id: string;
+  userBookId: string;
+  content: string;
+  page?: number | null;
+  type: NoteType;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface ReadingGoal {
+  id: string;
+  userId: string;
+  year: number;
+  target: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface ReadingSession {
+  id: string;
+  userBookId: string;
+  pagesRead: number;
+  duration?: number | null;
+  date: Date;
+  createdAt: Date;
+}
+
+export interface Collection {
+  id: string;
+  name: string;
+  emoji?: string | null;
+  color?: string | null;
+  userId: string;
+  order: number;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface BookSearchResult {
