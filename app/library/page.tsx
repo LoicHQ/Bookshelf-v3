@@ -12,11 +12,11 @@ import type { UserBook, BookStatus } from '@/types';
 type FilterStatus = 'ALL' | BookStatus;
 
 const STATUS_FILTERS: { value: FilterStatus; label: string; icon: typeof Library; color: string }[] = [
-  { value: 'ALL', label: 'Tous', icon: Library, color: 'bg-blue-500/10 text-blue-500' },
-  { value: 'TO_READ', label: 'À lire', icon: BookOpen, color: 'bg-gray-500/10 text-gray-500' },
-  { value: 'READING', label: 'En cours', icon: Clock, color: 'bg-orange-500/10 text-orange-500' },
-  { value: 'COMPLETED', label: 'Lu', icon: BookCheck, color: 'bg-green-500/10 text-green-500' },
-  { value: 'ABANDONED', label: 'Abandonné', icon: XCircle, color: 'bg-red-500/10 text-red-500' },
+  { value: 'ALL', label: 'Tous', icon: Library, color: 'bg-blue-500/10 text-blue-600 dark:text-blue-400' },
+  { value: 'TO_READ', label: 'À lire', icon: BookOpen, color: 'bg-gray-500/10 text-gray-600 dark:text-gray-400' },
+  { value: 'READING', label: 'En cours', icon: Clock, color: 'bg-orange-500/10 text-orange-600 dark:text-orange-400' },
+  { value: 'COMPLETED', label: 'Lu', icon: BookCheck, color: 'bg-green-500/10 text-green-600 dark:text-green-400' },
+  { value: 'ABANDONED', label: 'Abandonné', icon: XCircle, color: 'bg-red-500/10 text-red-600 dark:text-red-400' },
 ];
 
 export default function LibraryPage() {
@@ -64,71 +64,73 @@ export default function LibraryPage() {
   if (loading) {
     return (
       <div className="container mx-auto flex min-h-screen items-center justify-center p-6 pb-24">
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 className="h-10 w-10 animate-spin text-primary" />
-          <p className="text-muted-foreground text-[15px]">Chargement...</p>
+        <div className="flex flex-col items-center gap-4 animate-spring-in">
+          <Loader2 className="h-12 w-12 animate-spin text-primary" />
+          <p className="text-muted-foreground text-[17px] font-medium">Chargement...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto max-w-7xl p-6 pb-24">
-      {/* Header */}
-      <div className="mb-8 space-y-4">
+    <div className="container mx-auto max-w-7xl p-6 pb-24 safe-area-inset-top">
+      {/* Header iOS-like */}
+      <div className="mb-8 space-y-6 animate-spring-in">
         <div className="flex items-center justify-between">
-          <div className="space-y-1">
-            <h1 className="text-4xl font-bold tracking-tight flex items-center gap-3">
-              <div className="rounded-2xl bg-primary/10 p-3">
+          <div className="space-y-2">
+            <h1 className="text-5xl font-bold tracking-tight flex items-center gap-4">
+              <div className="rounded-2xl bg-primary/10 p-3.5 shadow-ios-sm">
                 <Library className="h-8 w-8 text-primary" />
               </div>
-              Ma bibliothèque
+              <span className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                Ma bibliothèque
+              </span>
             </h1>
-            <p className="text-muted-foreground text-lg">
+            <p className="text-muted-foreground text-[17px] leading-relaxed">
               {stats.total} livre{stats.total > 1 ? 's' : ''} dans votre bibliothèque
             </p>
           </div>
         </div>
 
-        {/* Statistics Cards */}
+        {/* Statistics Cards iOS-like */}
         {stats.total > 0 && (
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
-              <CardContent className="p-4">
-                <div className="space-y-1">
-                  <p className="text-2xl font-bold">{stats.total}</p>
-                  <p className="text-xs text-muted-foreground font-medium">Total</p>
+            <Card className="glass-card shadow-ios-sm border-border/40">
+              <CardContent className="p-5">
+                <div className="space-y-1.5">
+                  <p className="text-3xl font-bold">{stats.total}</p>
+                  <p className="text-[13px] text-muted-foreground font-semibold">Total</p>
                 </div>
               </CardContent>
             </Card>
-            <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
-              <CardContent className="p-4">
-                <div className="space-y-1">
-                  <p className="text-2xl font-bold text-gray-500">{stats.toRead}</p>
-                  <p className="text-xs text-muted-foreground font-medium">À lire</p>
+            <Card className="glass-card shadow-ios-sm border-border/40">
+              <CardContent className="p-5">
+                <div className="space-y-1.5">
+                  <p className="text-3xl font-bold text-gray-600 dark:text-gray-400">{stats.toRead}</p>
+                  <p className="text-[13px] text-muted-foreground font-semibold">À lire</p>
                 </div>
               </CardContent>
             </Card>
-            <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
-              <CardContent className="p-4">
-                <div className="space-y-1">
-                  <p className="text-2xl font-bold text-orange-500">{stats.reading}</p>
-                  <p className="text-xs text-muted-foreground font-medium">En cours</p>
+            <Card className="glass-card shadow-ios-sm border-border/40">
+              <CardContent className="p-5">
+                <div className="space-y-1.5">
+                  <p className="text-3xl font-bold text-orange-600 dark:text-orange-400">{stats.reading}</p>
+                  <p className="text-[13px] text-muted-foreground font-semibold">En cours</p>
                 </div>
               </CardContent>
             </Card>
-            <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
-              <CardContent className="p-4">
-                <div className="space-y-1">
-                  <p className="text-2xl font-bold text-green-500">{stats.completed}</p>
-                  <p className="text-xs text-muted-foreground font-medium">Lu</p>
+            <Card className="glass-card shadow-ios-sm border-border/40">
+              <CardContent className="p-5">
+                <div className="space-y-1.5">
+                  <p className="text-3xl font-bold text-green-600 dark:text-green-400">{stats.completed}</p>
+                  <p className="text-[13px] text-muted-foreground font-semibold">Lu</p>
                 </div>
               </CardContent>
             </Card>
           </div>
         )}
 
-        {/* Filter Buttons */}
+        {/* Filter Buttons iOS Segmented Control-like */}
         {stats.total > 0 && (
           <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-6 px-6">
             {STATUS_FILTERS.map((filter) => {
@@ -144,22 +146,22 @@ export default function LibraryPage() {
                   key={filter.value}
                   onClick={() => setSelectedFilter(filter.value)}
                   className={cn(
-                    'flex items-center gap-2 px-4 py-2.5 rounded-2xl text-[15px] font-medium transition-all duration-200 whitespace-nowrap',
+                    'flex items-center gap-2.5 px-5 py-3 rounded-2xl text-[15px] font-semibold transition-ios whitespace-nowrap',
                     'active:scale-95',
                     isActive
-                      ? 'bg-primary text-primary-foreground shadow-sm'
-                      : 'bg-card/50 border border-border/50 text-foreground/70 hover:bg-card hover:text-foreground'
+                      ? 'bg-primary text-primary-foreground shadow-ios-sm'
+                      : 'glass-card border border-border/40 text-foreground/70 hover:bg-card/80 hover:text-foreground'
                   )}
                 >
-                  <Icon className="h-4 w-4" />
+                  <Icon className={cn('h-4 w-4 transition-ios', isActive && 'scale-110')} />
                   <span>{filter.label}</span>
                   {count > 0 && (
                     <span
                       className={cn(
-                        'px-2 py-0.5 rounded-full text-xs font-semibold',
+                        'px-2.5 py-1 rounded-full text-xs font-bold min-w-[24px] text-center',
                         isActive
                           ? 'bg-primary-foreground/20 text-primary-foreground'
-                          : 'bg-muted text-muted-foreground'
+                          : 'bg-muted/50 text-muted-foreground'
                       )}
                     >
                       {count}
@@ -174,42 +176,52 @@ export default function LibraryPage() {
 
       {/* Books Grid */}
       {stats.total === 0 ? (
-        <Card className="shadow-lg border-border/50">
-          <CardContent className="py-20 text-center space-y-6">
-            <div className="mx-auto w-28 h-28 rounded-full bg-secondary/50 flex items-center justify-center">
-              <Library className="h-14 w-14 text-muted-foreground/50" />
+        <Card className="glass-card shadow-ios-lg border-border/40 animate-spring-in">
+          <CardContent className="py-24 text-center space-y-6">
+            <div className="mx-auto w-32 h-32 rounded-full bg-secondary/30 flex items-center justify-center shadow-ios-sm">
+              <Library className="h-16 w-16 text-muted-foreground/40" />
             </div>
-            <div className="space-y-2 max-w-md mx-auto">
-              <p className="text-foreground text-2xl font-bold">Votre bibliothèque est vide</p>
-              <p className="text-muted-foreground text-[15px] leading-relaxed">
+            <div className="space-y-3 max-w-md mx-auto">
+              <p className="text-foreground text-3xl font-bold">Votre bibliothèque est vide</p>
+              <p className="text-muted-foreground text-[17px] leading-relaxed">
                 Commencez à ajouter des livres pour créer votre collection personnelle
               </p>
             </div>
-            <Button onClick={() => router.push('/add-book')} size="lg" className="mt-4">
+            <Button
+              onClick={() => router.push('/add-book')}
+              size="lg"
+              className="mt-6 h-14 text-[17px] font-semibold shadow-ios-sm"
+            >
               Ajouter votre premier livre
             </Button>
           </CardContent>
         </Card>
       ) : filteredBooks.length === 0 ? (
-        <Card className="shadow-lg border-border/50">
-          <CardContent className="py-16 text-center space-y-4">
-            <p className="text-foreground text-xl font-semibold">Aucun livre trouvé</p>
-            <p className="text-muted-foreground text-[15px]">
+        <Card className="glass-card shadow-ios-lg border-border/40 animate-spring-in">
+          <CardContent className="py-20 text-center space-y-4">
+            <p className="text-foreground text-2xl font-bold">Aucun livre trouvé</p>
+            <p className="text-muted-foreground text-[17px]">
               Aucun livre avec ce filtre dans votre bibliothèque
             </p>
             <Button
               variant="outline"
               onClick={() => setSelectedFilter('ALL')}
-              className="mt-4"
+              className="mt-6 h-12 text-[15px] font-semibold glass-card border-border/40"
             >
               Voir tous les livres
             </Button>
           </CardContent>
         </Card>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-1 xl:grid-cols-2">
-          {filteredBooks.map((userBook) => (
-            <BookCard key={userBook.id} book={userBook} showStatus showRating />
+        <div className="grid gap-5 sm:grid-cols-1 lg:grid-cols-1 xl:grid-cols-2">
+          {filteredBooks.map((userBook, index) => (
+            <div
+              key={userBook.id}
+              className="animate-spring-in"
+              style={{ animationDelay: `${index * 50}ms` }}
+            >
+              <BookCard book={userBook} showStatus showRating />
+            </div>
           ))}
         </div>
       )}

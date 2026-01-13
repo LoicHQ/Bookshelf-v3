@@ -1,9 +1,14 @@
-﻿import NextAuth from 'next-auth';
+/**
+ * @agent backend-logic
+ * Configuration NextAuth v5 avec providers OAuth (Google, GitHub) et Credentials
+ */
+import NextAuth from 'next-auth';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import Google from 'next-auth/providers/google';
 import GitHub from 'next-auth/providers/github';
 import Credentials from 'next-auth/providers/credentials';
 import { prisma } from './prisma';
+import { UserService } from '@/services/user.service';
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -23,7 +28,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       clientId: process.env.GITHUB_CLIENT_ID!,
       clientSecret: process.env.GITHUB_CLIENT_SECRET!,
     }),
-    // Credentials provider pour le dÃ©veloppement/test
+    // Credentials provider avec vérification du mot de passe hashé
     Credentials({
       name: 'credentials',
       credentials: {
@@ -31,27 +36,27 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        if (!credentials?.email) {
+        if (!credentials?.email || !credentials?.password) {
           return null;
         }
 
-        // En production, vÃ©rifier le mot de passe hashÃ©
-        // Pour l'instant, on crÃ©e/rÃ©cupÃ¨re l'utilisateur par email
-        const user = await prisma.user.upsert({
-          where: { email: credentials.email as string },
-          update: {},
-          create: {
+        try {
+          // Vérifier les identifiants avec le service utilisateur
+          const user = await UserService.verifyCredentials({
             email: credentials.email as string,
-            name: (credentials.email as string).split('@')[0],
-          },
-        });
+            password: credentials.password as string,
+          });
 
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          image: user.image,
-        };
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            image: user.image,
+          };
+        } catch (error) {
+          // En cas d'erreur (email/mot de passe incorrect), retourner null
+          return null;
+        }
       },
     }),
   ],

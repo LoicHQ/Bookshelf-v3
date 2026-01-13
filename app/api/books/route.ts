@@ -1,141 +1,62 @@
+/**
+ * @agent backend-logic
+ * API Routes pour la gestion des livres utilisateur
+ */
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
 import { auth } from '@/lib/auth';
+import { BookService } from '@/services/book.service';
+import { listBooksQuerySchema, createBookSchema } from '@/lib/validation';
+import { errorToResponse, UnauthorizedError, ValidationError } from '@/lib/errors';
 
-// GET /api/books - Récupérer les livres de l'utilisateur
+/**
+ * GET /api/books - Récupérer les livres de l'utilisateur
+ */
 export async function GET(request: NextRequest) {
   try {
     const session = await auth();
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
+      throw new UnauthorizedError();
     }
 
     const { searchParams } = new URL(request.url);
-    const status = searchParams.get('status');
-    const limit = parseInt(searchParams.get('limit') || '50');
-    const offset = parseInt(searchParams.get('offset') || '0');
+    const query = Object.fromEntries(searchParams.entries());
+    
+    const validatedQuery = listBooksQuerySchema.parse(query);
+    const result = await BookService.getUserBooks(session.user.id, validatedQuery);
 
-    const where = {
-      userId: session.user.id,
-      ...(status && { status: status as never }),
-    };
-
-    const [books, total] = await Promise.all([
-      prisma.userBook.findMany({
-        where,
-        include: {
-          book: true,
-        },
-        orderBy: { updatedAt: 'desc' },
-        take: limit,
-        skip: offset,
-      }),
-      prisma.userBook.count({ where }),
-    ]);
-
-    return NextResponse.json({ books, total });
+    return NextResponse.json(result);
   } catch (error) {
     console.error('Error fetching books:', error);
+    const errorResponse = errorToResponse(error);
     return NextResponse.json(
-      { error: 'Erreur lors de la récupération des livres' },
-      { status: 500 }
+      { error: errorResponse.error, code: errorResponse.code },
+      { status: errorResponse.statusCode }
     );
   }
 }
 
-// POST /api/books - Ajouter un livre à la bibliothèque
+/**
+ * POST /api/books - Ajouter un livre à la bibliothèque
+ */
 export async function POST(request: NextRequest) {
   try {
     const session = await auth();
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
+      throw new UnauthorizedError();
     }
 
     const body = await request.json();
-    const {
-      isbn,
-      isbn13,
-      title,
-      author,
-      authors,
-      description,
-      coverImage,
-      thumbnail,
-      publishedDate,
-      publisher,
-      pageCount,
-      categories,
-      language,
-      status = 'TO_READ',
-    } = body;
-
-    if (!title) {
-      return NextResponse.json({ error: 'Le titre est requis' }, { status: 400 });
-    }
-
-    // Chercher si le livre existe déjà (par ISBN ou titre+auteur)
-    let book = null;
-    if (isbn || isbn13) {
-      book = await prisma.book.findFirst({
-        where: {
-          OR: [...(isbn ? [{ isbn }] : []), ...(isbn13 ? [{ isbn13 }] : [])],
-        },
-      });
-    }
-
-    // Si le livre n'existe pas, le créer
-    if (!book) {
-      book = await prisma.book.create({
-        data: {
-          isbn,
-          isbn13,
-          title,
-          author: author || authors?.[0] || 'Auteur inconnu',
-          authors: authors || (author ? [author] : []),
-          description,
-          coverImage,
-          thumbnail,
-          publishedDate,
-          publisher,
-          pageCount,
-          categories: categories || [],
-          language,
-        },
-      });
-    }
-
-    // Vérifier si l'utilisateur a déjà ce livre
-    const existingUserBook = await prisma.userBook.findUnique({
-      where: {
-        userId_bookId: {
-          userId: session.user.id,
-          bookId: book.id,
-        },
-      },
-    });
-
-    if (existingUserBook) {
-      return NextResponse.json(
-        { error: 'Ce livre est déjà dans votre bibliothèque', userBook: existingUserBook },
-        { status: 409 }
-      );
-    }
-
-    // Ajouter le livre à la bibliothèque de l'utilisateur
-    const userBook = await prisma.userBook.create({
-      data: {
-        userId: session.user.id,
-        bookId: book.id,
-        status,
-      },
-      include: {
-        book: true,
-      },
-    });
+    const validatedData = createBookSchema.parse(body);
+    
+    const userBook = await BookService.addBookToLibrary(session.user.id, validatedData);
 
     return NextResponse.json({ userBook }, { status: 201 });
   } catch (error) {
     console.error('Error adding book:', error);
-    return NextResponse.json({ error: "Erreur lors de l'ajout du livre" }, { status: 500 });
+    const errorResponse = errorToResponse(error);
+    return NextResponse.json(
+      { error: errorResponse.error, code: errorResponse.code },
+      { status: errorResponse.statusCode }
+    );
   }
 }

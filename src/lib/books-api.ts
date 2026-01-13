@@ -1,3 +1,7 @@
+/**
+ * @agent backend-logic
+ * API client pour la recherche de livres via Google Books et Open Library
+ */
 import type { BookSearchResult, GoogleBooksVolume, OpenLibraryBook } from '@/types';
 
 const GOOGLE_BOOKS_API = 'https://www.googleapis.com/books/v1/volumes';

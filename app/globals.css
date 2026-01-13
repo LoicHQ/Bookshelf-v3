@@ -57,7 +57,7 @@ html {
   -webkit-overflow-scrolling: touch;
 }
 
-/* iOS-style blur effect */
+/* iOS-style blur effect avec glassmorphism amélioré */
 .backdrop-blur-ios {
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
@@ -68,6 +68,87 @@ html {
   .backdrop-blur-ios {
     background-color: rgba(28, 28, 30, 0.8);
   }
+}
+
+/* Glassmorphism iOS-like */
+.glass-card {
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  background-color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+@media (prefers-color-scheme: dark) {
+  .glass-card {
+    background-color: rgba(28, 28, 30, 0.7);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* Ombres iOS */
+.shadow-ios-sm {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+}
+
+.shadow-ios-md {
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+}
+
+.shadow-ios-lg {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+}
+
+@media (prefers-color-scheme: dark) {
+  .shadow-ios-sm {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.4);
+  }
+  
+  .shadow-ios-md {
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4), 0 3px 6px rgba(0, 0, 0, 0.5);
+  }
+  
+  .shadow-ios-lg {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5), 0 6px 6px rgba(0, 0, 0, 0.6);
+  }
+}
+
+/* Animations iOS-like (spring) */
+@keyframes spring-in {
+  0% {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes spring-out {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+}
+
+.animate-spring-in {
+  animation: spring-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.animate-spring-out {
+  animation: spring-out 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Transition iOS-like */
+.transition-ios {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Safe area insets for iOS */

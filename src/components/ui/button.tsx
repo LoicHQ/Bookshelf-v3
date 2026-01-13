@@ -5,16 +5,16 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-2xl text-base font-semibold transition-all duration-200 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none active:scale-[0.98]",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-2xl text-base font-semibold transition-ios disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none active:scale-[0.97]",
   {
     variants: {
       variant: {
-        default: 'bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 active:bg-primary/95',
+        default: 'bg-primary text-primary-foreground shadow-ios-sm hover:bg-primary/90 active:bg-primary/95',
         destructive:
-          'bg-red-500 text-white shadow-sm hover:bg-red-600 active:bg-red-700',
+          'bg-red-500 text-white shadow-ios-sm hover:bg-red-600 active:bg-red-700',
         outline:
-          'border border-border bg-card/50 backdrop-blur-sm hover:bg-accent/50 active:bg-accent',
-        secondary: 'bg-secondary text-foreground shadow-sm hover:bg-secondary/80 active:bg-secondary/70',
+          'border border-border/40 glass-card hover:bg-accent/50 active:bg-accent',
+        secondary: 'bg-secondary text-foreground shadow-ios-sm hover:bg-secondary/80 active:bg-secondary/70',
         ghost: 'hover:bg-accent/50 active:bg-accent',
         link: 'text-primary underline-offset-4 hover:underline',
       },

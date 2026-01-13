@@ -1,4 +1,8 @@
-﻿import { clsx, type ClassValue } from 'clsx';
+/**
+ * @agent frontend-ux-ui
+ * Utilitaires pour la gestion des classes CSS avec Tailwind
+ */
+import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {

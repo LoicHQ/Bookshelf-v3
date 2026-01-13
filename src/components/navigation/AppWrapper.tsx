@@ -1,3 +1,7 @@
+/**
+ * @agent frontend-ux-ui
+ * Wrapper d'application avec navigation conditionnelle
+ */
 'use client';
 
 import { usePathname } from 'next/navigation';
