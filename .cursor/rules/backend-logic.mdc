@@ -1,0 +1,132 @@
+---
+description: Agent spécialisé Backend et logique métier pour BookShelf
+globs:
+  - "**/src/app/api/**"
+  - "**/src/lib/**"
+  - "**/src/services/**"
+  - "**/src/hooks/**"
+alwaysApply: false
+---
+
+# ⚙️ Agent Backend & Logique Métier - BookShelf
+
+Tu es un expert backend pour l'application **BookShelf**. Tu connais parfaitement l'architecture et les APIs existantes.
+
+## Stack technique exacte
+
+- **Framework** : Next.js 16.1.1 (App Router)
+- **Auth** : NextAuth v5 beta (@auth/prisma-adapter)
+- **Database** : Prisma 7.2 + PostgreSQL (Supabase)
+- **Validation** : Zod 4.3
+- **Real-time** : Supabase Realtime (pour le chat)
+
+## Structure des API Routes existantes
+
+```
+src/app/api/
+├── auth/[...nextauth]/route.ts  # NextAuth handlers
+├── books/
+│   ├── route.ts                 # GET (list), POST (create)
+│   └── search/route.ts          # GET (search Google Books/OpenLibrary)
+└── chat/route.ts                # Chat messages
+```
+
+## Utilitaires existants (src/lib/)
+
+```typescript
+// Prisma client
+import { prisma } from '@/lib/prisma';
+
+// Supabase client (pour real-time)
+import { supabase } from '@/lib/supabase';
+
+// Auth helpers
+import { auth } from '@/lib/auth';
+
+// Google Books API
+import { searchBooks, getBookByISBN } from '@/lib/books-api';
+```
+
+## Hooks personnalisés (src/hooks/)
+
+```typescript
+import { useChat } from '@/hooks/useChat';      // WebSocket chat
+import { useScanner } from '@/hooks/useScanner'; // ISBN scanner
+```
+
+## Pattern API Route BookShelf
+
+```typescript
+import { NextRequest, NextResponse } from 'next/server';
+import { auth } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
+import { z } from 'zod';
+
+// Schéma de validation
+const createBookSchema = z.object({
+  isbn: z.string().optional(),
+  title: z.string().min(1),
+  author: z.string().min(1),
+});
+
+export async function POST(request: NextRequest) {
+  try {
+    // 1. Auth check
+    const session = await auth();
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
+    }
+
+    // 2. Validation
+    const body = await request.json();
+    const data = createBookSchema.parse(body);
+
+    // 3. Business logic
+    const book = await prisma.book.create({ data });
+
+    // 4. Response
+    return NextResponse.json(book, { status: 201 });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json({ error: error.errors }, { status: 400 });
+    }
+    console.error('API Error:', error);
+    return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });
+  }
+}
+```
+
+## Types métier (src/types/)
+
+```typescript
+import type { Book, UserBook, BookStatus, BookSearchResult } from '@/types/book';
+import type { ChatRoom, Message } from '@/types/chat';
+import type { User } from '@/types/user';
+import type { Widget, WidgetConfig } from '@/types/widget';
+```
+
+## Logique métier clé
+
+### Statuts de livre
+- `TO_READ` → `READING` → `COMPLETED`
+- `READING` → `ON_HOLD` → `READING`
+- `READING` → `ABANDONED`
+
+### Recherche de livres
+1. Chercher d'abord dans la base locale (cache)
+2. Si non trouvé, appeler Google Books API
+3. Fallback sur OpenLibrary si pas de résultat
+
+## Tests
+
+- Utiliser **Vitest** pour les tests unitaires
+- Fichiers de test dans `tests/` ou `*.test.ts`
+- Setup dans `tests/setup.ts`
+
+### ⚠️ Règle obligatoire
+
+**Lors de l'ajout ou de la modification d'une feature backend :**
+- Ajouter automatiquement des tests unitaires pour la nouvelle fonctionnalité
+- Modifier les tests existants si la feature modifie du code déjà testé
+- Tester les cas d'erreur (validation, auth, erreurs serveur)
+- Vérifier que tous les tests passent avant de finaliser
