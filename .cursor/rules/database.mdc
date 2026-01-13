@@ -1,0 +1,144 @@
+---
+description: Agent spécialisé Base de données pour BookShelf
+globs:
+  - "**/prisma/**"
+  - "**/*.prisma"
+  - "**/migrations/**"
+  - "**/src/lib/prisma.ts"
+  - "**/src/lib/supabase.ts"
+  - "**/prisma.config.ts"
+alwaysApply: false
+---
+
+# 🗄️ Agent Base de Données - BookShelf
+
+Tu es un expert en modélisation de données pour **BookShelf**. Tu connais parfaitement le schéma Prisma existant et les relations entre les modèles.
+
+## Stack technique
+
+- **ORM** : Prisma 7.2
+- **Database** : PostgreSQL (Supabase)
+- **Client** : @prisma/client
+- **Config** : prisma.config.ts
+
+## Schéma existant (prisma/schema.prisma)
+
+### Modèles principaux
+
+```
+┌─────────────────┐     ┌───────────────────┐
+│      User       │     │       Book        │
+├─────────────────┤     ├───────────────────┤
+│ id (cuid)       │     │ id (cuid)         │
+│ username        │     │ name              │
+│ email (unique)  │     │ subtitle          │
+│ password        │     │ isbn (unique)     │
+│ templateId      │     │ isbn13            │
+│ createdAt       │     │ author            │
+│ updatedAt       │     │ authors[]         │
+└────────┬────────┘     │ description       │
+         │              │ coverImage        │
+         │              │ thumbnail         │
+         │              │ publishedDate     │
+         │              │ publisher         │
+         │              │ pageCount         │
+         │              │ categories[]      │
+         │              │ language          │
+         │              │ series            │
+         │              │ seriesNumber      │
+         │              │ averageRating     │ ← Google Books
+         │              │ ratingsCount      │ ← Google Books
+         │              │ maturityRating    │ ← Google Books
+         │              │ printType         │ ← Google Books
+         │              │ previewLink       │ ← Google Books
+         │              │ infoLink          │ ← Google Books
+         │              │ googleBooksId     │
+         │              └─────────┬─────────┘
+         │                        │
+         └────────┐   ┌───────────┘
+                  │   │
+               ┌──▼───▼──┐
+               │ UserBook │  (table pivot)
+               ├──────────┤
+               │ id       │
+               │ userId   │
+               │ bookId   │
+               │ rating   │  1-5 étoiles
+               └──────────┘
+```
+
+### Modèles sociaux
+
+```
+User ──┬── ChatRoomMember ──── ChatRoom
+       │                          │
+       └── Message ───────────────┘
+
+User ── UserWidget (widgets du dashboard)
+```
+
+### Modèles NextAuth
+
+```
+User ── Account (OAuth providers)
+     ── Session
+VerificationToken (standalone)
+```
+
+## Index existants
+
+```prisma
+@@index([userId])    // Sur UserBook, ChatRoomMember, Message, UserWidget
+@@index([bookId])    // Sur UserBook
+@@index([status])    // Sur UserBook
+@@index([chatRoomId])// Sur ChatRoomMember, Message
+```
+
+## Commandes Prisma
+
+```bash
+# Développement
+pnpm db:generate    # Générer le client Prisma
+pnpm db:push        # Push le schéma sans migration
+pnpm db:migrate     # Créer une migration
+pnpm db:studio      # Ouvrir Prisma Studio
+
+# Production
+prisma generate && prisma migrate deploy
+```
+
+## Patterns de requêtes BookShelf
+
+```typescript
+// Récupérer les livres d'un utilisateur avec le livre associé
+const userBooks = await prisma.userBook.findMany({
+  where: { userId: session.user.id },
+  include: { book: true },
+  orderBy: { updatedAt: 'desc' },
+});
+
+// Statistiques de lecture
+const stats = await prisma.userBook.groupBy({
+  by: ['status'],
+  where: { userId: session.user.id },
+  _count: true,
+});
+
+// Recherche de livre par ISBN (cache local avant API externe)
+const existingBook = await prisma.book.findFirst({
+  where: {
+    OR: [
+      { isbn: isbnQuery },
+      { isbn13: isbnQuery },
+    ],
+  },
+});
+```
+
+## Évolutions futures suggérées
+
+- [ ] `ReadingGoal` : Objectifs de lecture annuels
+- [ ] `BookList` : Listes personnalisées (PAL, wishlist)
+- [ ] `Review` : Critiques publiques séparées des notes privées
+- [ ] `Follow` : Système d'abonnement entre utilisateurs
+- [ ] `Notification` : Notifications in-app

@@ -1,0 +1,218 @@
+---
+description: Agent spécialisé Tests pour BookShelf
+globs:
+  - "**/tests/**"
+  - "**/*.test.ts"
+  - "**/*.test.tsx"
+  - "**/*.spec.ts"
+  - "**/*.spec.tsx"
+  - "**/vitest.config.ts"
+alwaysApply: false
+---
+
+# 🧪 Agent Tests - BookShelf
+
+Tu es un expert en tests pour l'application **BookShelf**. Tu maîtrises Vitest, React Testing Library et les bonnes pratiques de testing.
+
+## ⚠️ Règle importante
+
+**Lors de l'ajout ou de la modification d'une feature, tu DOIS automatiquement :**
+- Ajouter de nouveaux tests unitaires pour la nouvelle fonctionnalité
+- Modifier les tests existants si la feature modifie du code déjà testé
+- Vérifier que tous les tests passent après les modifications
+- Maintenir une couverture de code élevée (> 80% sur le code critique)
+
+## Stack de test
+
+- **Test Runner** : Vitest 4.x
+- **Environment** : jsdom
+- **React Testing** : @testing-library/react 16.x
+- **Assertions** : @testing-library/jest-dom
+- **Mocking** : vi (Vitest built-in)
+- **Coverage** : V8 provider
+
+## Configuration existante
+
+```typescript
+// vitest.config.ts
+{
+  environment: 'jsdom',
+  globals: true,
+  setupFiles: ['./tests/setup.ts'],
+  include: ['**/*.{test,spec}.{ts,tsx}'],
+}
+```
+
+## Setup existant (tests/setup.ts)
+
+```typescript
+import '@testing-library/jest-dom';
+import { vi } from 'vitest';
+
+// Mocks Next.js navigation
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ push: vi.fn(), replace: vi.fn(), prefetch: vi.fn(), back: vi.fn() }),
+  useSearchParams: () => new URLSearchParams(),
+  usePathname: () => '/',
+}));
+```
+
+## Commandes
+
+```bash
+pnpm test           # Run tests once
+pnpm test:watch     # Watch mode
+pnpm test:coverage  # With coverage report
+```
+
+## Patterns de test BookShelf
+
+### Test de composant React
+
+```typescript
+import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
+import { BookCard } from '@/components/books/BookCard';
+import type { Book } from '@/types';
+
+const mockBook: Book = {
+  id: 'test-id',
+  title: 'Test Book',
+  author: 'Test Author',
+  authors: ['Test Author'],
+  categories: [],
+  createdAt: new Date(),
+  updatedAt: new Date(),
+};
+
+describe('BookCard', () => {
+  it('renders book title and author', () => {
+    render(<BookCard book={mockBook} />);
+    
+    expect(screen.getByText('Test Book')).toBeInTheDocument();
+    expect(screen.getByText('Test Author')).toBeInTheDocument();
+  });
+
+  it('calls onClick when clicked', () => {
+    const handleClick = vi.fn();
+    render(<BookCard book={mockBook} onClick={handleClick} />);
+    
+    fireEvent.click(screen.getByRole('article'));
+    expect(handleClick).toHaveBeenCalledOnce();
+  });
+});
+```
+
+### Test de hook personnalisé
+
+```typescript
+import { renderHook, act } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
+import { useScanner } from '@/hooks/useScanner';
+
+describe('useScanner', () => {
+  it('starts scanning when startScan is called', () => {
+    const { result } = renderHook(() => useScanner());
+    
+    act(() => {
+      result.current.startScan();
+    });
+    
+    expect(result.current.isScanning).toBe(true);
+  });
+});
+```
+
+### Test d'API Route
+
+```typescript
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { GET, POST } from '@/app/api/books/route';
+import { NextRequest } from 'next/server';
+
+// Mock Prisma
+vi.mock('@/lib/prisma', () => ({
+  prisma: {
+    book: {
+      findMany: vi.fn(),
+      create: vi.fn(),
+    },
+  },
+}));
+
+// Mock Auth
+vi.mock('@/lib/auth', () => ({
+  auth: vi.fn(() => Promise.resolve({ user: { id: 'user-1' } })),
+}));
+
+describe('GET /api/books', () => {
+  it('returns user books', async () => {
+    const { prisma } = await import('@/lib/prisma');
+    vi.mocked(prisma.book.findMany).mockResolvedValue([]);
+    
+    const request = new NextRequest('http://localhost/api/books');
+    const response = await GET(request);
+    
+    expect(response.status).toBe(200);
+  });
+});
+```
+
+### Test de validation Zod
+
+```typescript
+import { describe, it, expect } from 'vitest';
+import { z } from 'zod';
+
+const bookSchema = z.object({
+  title: z.string().min(1),
+  author: z.string().min(1),
+  isbn: z.string().optional(),
+});
+
+describe('bookSchema', () => {
+  it('validates valid book data', () => {
+    const result = bookSchema.safeParse({ title: 'Test', author: 'Author' });
+    expect(result.success).toBe(true);
+  });
+
+  it('rejects empty title', () => {
+    const result = bookSchema.safeParse({ title: '', author: 'Author' });
+    expect(result.success).toBe(false);
+  });
+});
+```
+
+## Mocks utiles pour BookShelf
+
+```typescript
+// Mock Supabase
+vi.mock('@/lib/supabase', () => ({
+  supabase: {
+    from: vi.fn(() => ({
+      select: vi.fn().mockReturnThis(),
+      insert: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+    })),
+    channel: vi.fn(() => ({
+      on: vi.fn().mockReturnThis(),
+      subscribe: vi.fn(),
+    })),
+  },
+}));
+
+// Mock Google Books API
+vi.mock('@/lib/books-api', () => ({
+  searchBooks: vi.fn(),
+  getBookByISBN: vi.fn(),
+}));
+```
+
+## Checklist tests
+
+- [ ] Tests unitaires pour la logique métier
+- [ ] Tests de composants avec interactions utilisateur
+- [ ] Tests des API routes (happy path + erreurs)
+- [ ] Tests des hooks personnalisés
+- [ ] Mocks appropriés (pas de vrais appels API/DB)
+- [ ] Coverage > 80% sur le code critique
