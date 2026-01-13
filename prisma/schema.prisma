@@ -1,3 +1,4 @@
+// @agent database
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
@@ -14,13 +15,16 @@ datasource db {
 // ============================================================================
 
 model User {
-  id            String    @id @default(cuid())
-  email         String    @unique
-  name          String?
-  image         String?
-  emailVerified DateTime?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id                   String    @id @default(cuid())
+  email                String    @unique
+  name                 String?
+  image                String?
+  password             String?   // Mot de passe hashé avec bcrypt
+  passwordResetToken   String?   // Token pour réinitialisation de mot de passe
+  passwordResetExpires DateTime? // Date d'expiration du token de réinitialisation
+  emailVerified        DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
 
   // Relations
   accounts      Account[]

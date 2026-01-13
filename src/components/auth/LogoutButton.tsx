@@ -1,3 +1,7 @@
+/**
+ * @agent frontend-ux-ui
+ * Bouton de déconnexion avec intégration NextAuth
+ */
 'use client';
 
 import { signOut } from 'next-auth/react';

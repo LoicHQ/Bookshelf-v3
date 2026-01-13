@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { BookCard } from '@/components/books/BookCard';
 import { Loader2, Search, Plus } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import type { BookSearchResult } from '@/types';
 
 export default function AddBookPage() {
@@ -66,19 +67,28 @@ export default function AddBookPage() {
   };
 
   return (
-    <div className="container mx-auto max-w-2xl p-6 pb-24">
-      <div className="mb-8 space-y-2">
-        <h1 className="text-4xl font-bold tracking-tight">Ajouter un livre</h1>
-        <p className="text-muted-foreground text-lg">Recherchez un livre par son code ISBN</p>
+    <div className="container mx-auto max-w-2xl p-6 pb-24 safe-area-inset-top">
+      {/* Header iOS-like */}
+      <div className="mb-8 space-y-3 animate-spring-in">
+        <h1 className="text-5xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+          Ajouter un livre
+        </h1>
+        <p className="text-muted-foreground text-[17px] leading-relaxed">
+          Recherchez un livre par son code ISBN
+        </p>
       </div>
 
-      <Card className="shadow-lg">
-        <CardHeader>
-          <CardTitle>Recherche par ISBN</CardTitle>
-          <CardDescription>Entrez le code ISBN-10 ou ISBN-13 du livre</CardDescription>
+      {/* Card iOS-like avec glassmorphism */}
+      <Card className="glass-card shadow-ios-lg border-border/40 animate-spring-in">
+        <CardHeader className="pb-6">
+          <CardTitle className="text-2xl font-bold">Recherche par ISBN</CardTitle>
+          <CardDescription className="text-[15px]">
+            Entrez le code ISBN-10 ou ISBN-13 du livre
+          </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-5">
+        <CardContent className="space-y-6">
           <form onSubmit={handleSearch} className="space-y-5">
+            {/* Input avec bouton de recherche iOS-like */}
             <div className="flex gap-3">
               <Input
                 type="text"
@@ -86,9 +96,15 @@ export default function AddBookPage() {
                 value={isbn}
                 onChange={(e) => setIsbn(e.target.value)}
                 disabled={loading}
-                className="flex-1"
+                className="flex-1 h-14 text-[17px]"
+                autoFocus
               />
-              <Button type="submit" disabled={loading || !isbn} size="icon" className="h-14 w-14">
+              <Button
+                type="submit"
+                disabled={loading || !isbn}
+                size="icon"
+                className="h-14 w-14 shadow-ios-sm"
+              >
                 {loading ? (
                   <Loader2 className="h-5 w-5 animate-spin" />
                 ) : (
@@ -96,20 +112,27 @@ export default function AddBookPage() {
                 )}
               </Button>
             </div>
+
+            {/* Message d'erreur iOS-like */}
             {error && (
-              <div className="rounded-2xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 p-4 text-[15px] text-red-600 dark:text-red-400">
+              <div className="rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200/50 dark:border-red-900/30 p-4 text-[15px] text-red-600 dark:text-red-400 animate-spring-in">
                 {error}
               </div>
             )}
           </form>
 
+          {/* Résultat de recherche iOS-like */}
           {book && (
-            <div className="space-y-5 pt-4 border-t border-border/50">
+            <div className="space-y-6 pt-6 border-t border-border/30 animate-spring-in">
               <div>
-                <h3 className="mb-4 text-lg font-semibold">Livre trouvé :</h3>
+                <h3 className="mb-5 text-xl font-bold">Livre trouvé :</h3>
                 <BookCard book={book} showStatus={false} showRating={false} />
               </div>
-              <Button onClick={handleAdd} disabled={loading} className="w-full" size="lg">
+              <Button
+                onClick={handleAdd}
+                disabled={loading}
+                className="w-full h-14 text-[17px] font-semibold shadow-ios-sm"
+              >
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 h-5 w-5 animate-spin" />

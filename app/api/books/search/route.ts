@@ -1,37 +1,47 @@
+/**
+ * @agent backend-logic
+ * API Route pour la recherche de livres via Google Books et Open Library
+ */
 import { NextRequest, NextResponse } from 'next/server';
 import { searchBooks, fetchBookByISBN } from '@/lib/books-api';
+import { searchBooksQuerySchema } from '@/lib/validation';
+import { errorToResponse, ValidationError } from '@/lib/errors';
 
-// GET /api/books/search?q=xxx ou ?isbn=xxx
+/**
+ * GET /api/books/search?q=xxx ou ?isbn=xxx
+ */
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const query = searchParams.get('q');
-    const isbn = searchParams.get('isbn');
-    const limit = parseInt(searchParams.get('limit') || '10');
-
-    if (!query && !isbn) {
-      return NextResponse.json({ error: 'Paramètre q ou isbn requis' }, { status: 400 });
-    }
+    const query = Object.fromEntries(searchParams.entries());
+    
+    const validatedQuery = searchBooksQuerySchema.parse(query);
 
     let results;
 
-    if (isbn) {
+    if (validatedQuery.isbn) {
       // Recherche par ISBN
       try {
-        const book = await fetchBookByISBN(isbn);
+        const book = await fetchBookByISBN(validatedQuery.isbn);
         results = book ? [book] : [];
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Erreur lors de la recherche par ISBN';
-        return NextResponse.json({ error: errorMessage }, { status: 400 });
+        throw new ValidationError(errorMessage);
       }
-    } else if (query) {
+    } else if (validatedQuery.q) {
       // Recherche par titre/auteur
-      results = await searchBooks(query, limit);
+      results = await searchBooks(validatedQuery.q, validatedQuery.limit);
+    } else {
+      throw new ValidationError('Paramètre q ou isbn requis');
     }
 
     return NextResponse.json({ results });
   } catch (error) {
     console.error('Error searching books:', error);
-    return NextResponse.json({ error: 'Erreur lors de la recherche' }, { status: 500 });
+    const errorResponse = errorToResponse(error);
+    return NextResponse.json(
+      { error: errorResponse.error, code: errorResponse.code },
+      { status: errorResponse.statusCode }
+    );
   }
 }

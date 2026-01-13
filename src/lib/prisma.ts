@@ -1,3 +1,7 @@
+/**
+ * @agent database
+ * Client Prisma avec adaptateur PostgreSQL pour Supabase
+ */
 import { PrismaClient } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
