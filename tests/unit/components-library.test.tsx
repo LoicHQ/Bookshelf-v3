@@ -38,33 +38,33 @@ describe('SearchBar', () => {
 
   it('should render search input', () => {
     render(<SearchBar value="" onChange={mockOnChange} />);
-    
+
     const input = screen.getByPlaceholderText(/rechercher/i);
     expect(input).toBeInTheDocument();
   });
 
   it('should call onChange when typing', () => {
     render(<SearchBar value="" onChange={mockOnChange} />);
-    
+
     const input = screen.getByPlaceholderText(/rechercher/i);
     fireEvent.change(input, { target: { value: 'test query' } });
-    
+
     expect(mockOnChange).toHaveBeenCalledWith('test query');
   });
 
   it('should show clear button when value is not empty', () => {
     render(<SearchBar value="test" onChange={mockOnChange} />);
-    
+
     const buttons = screen.getAllByRole('button');
-    const clearButton = buttons.find(btn => btn.querySelector('.lucide-x'));
+    const clearButton = buttons.find((btn) => btn.querySelector('.lucide-x'));
     expect(clearButton).toBeInTheDocument();
   });
 
   it('should clear input when clear button is clicked', () => {
     render(<SearchBar value="test" onChange={mockOnChange} />);
-    
+
     const buttons = screen.getAllByRole('button');
-    const clearButton = buttons.find(btn => btn.querySelector('.lucide-x'));
+    const clearButton = buttons.find((btn) => btn.querySelector('.lucide-x'));
     if (clearButton) {
       fireEvent.click(clearButton);
       expect(mockOnChange).toHaveBeenCalledWith('');
@@ -73,9 +73,9 @@ describe('SearchBar', () => {
 
   it('should call onFilterClick when filter button is clicked', () => {
     render(<SearchBar value="" onChange={mockOnChange} onFilterClick={mockOnFilterClick} />);
-    
+
     const buttons = screen.getAllByRole('button');
-    const filterButton = buttons.find(btn => btn.querySelector('.lucide-sliders-horizontal'));
+    const filterButton = buttons.find((btn) => btn.querySelector('.lucide-sliders-horizontal'));
     if (filterButton) {
       fireEvent.click(filterButton);
       expect(mockOnFilterClick).toHaveBeenCalled();
@@ -84,14 +84,14 @@ describe('SearchBar', () => {
 
   it('should not show filter button when showFilter is false', () => {
     const { container } = render(<SearchBar value="" onChange={mockOnChange} showFilter={false} />);
-    
+
     const filterButton = container.querySelector('.lucide-sliders-horizontal');
     expect(filterButton).not.toBeInTheDocument();
   });
 
   it('should apply custom placeholder', () => {
     render(<SearchBar value="" onChange={mockOnChange} placeholder="Custom placeholder" />);
-    
+
     expect(screen.getByPlaceholderText('Custom placeholder')).toBeInTheDocument();
   });
 });
@@ -122,19 +122,19 @@ describe('BookGrid', () => {
 
   it('should render empty state when no books', () => {
     render(<BookGrid books={[]} viewMode="grid" />);
-    
+
     expect(screen.getByText(/Aucun livre trouvé/i)).toBeInTheDocument();
   });
 
   it('should render books in grid mode', () => {
     render(<BookGrid books={[mockBook]} viewMode="grid" />);
-    
+
     expect(screen.getByText('Test Book')).toBeInTheDocument();
   });
 
   it('should render books in list mode', () => {
     render(<BookGrid books={[mockBook]} viewMode="list" />);
-    
+
     expect(screen.getByText('Test Book')).toBeInTheDocument();
     expect(screen.getByText('Test Author')).toBeInTheDocument();
   });
@@ -144,9 +144,9 @@ describe('BookGrid', () => {
       ...mockBook,
       status: 'READING',
     };
-    
+
     render(<BookGrid books={[readingBook]} viewMode="list" />);
-    
+
     expect(screen.getByText(/En cours/i)).toBeInTheDocument();
   });
 
@@ -155,9 +155,9 @@ describe('BookGrid', () => {
       ...mockBook,
       favorite: true,
     };
-    
+
     const { container } = render(<BookGrid books={[favoritedBook]} viewMode="grid" />);
-    
+
     const stars = container.querySelectorAll('.lucide-star');
     expect(stars.length).toBeGreaterThan(0);
   });
@@ -167,9 +167,9 @@ describe('BookGrid', () => {
       ...mockBook,
       rating: 4,
     };
-    
+
     const { container } = render(<BookGrid books={[ratedBook]} viewMode="list" />);
-    
+
     const stars = container.querySelectorAll('.lucide-star');
     expect(stars.length).toBeGreaterThan(0);
     expect(screen.getByText('4')).toBeInTheDocument();
@@ -177,7 +177,7 @@ describe('BookGrid', () => {
 
   it('should link to book detail page', () => {
     render(<BookGrid books={[mockBook]} viewMode="grid" />);
-    
+
     const link = screen.getByText('Test Book').closest('a');
     expect(link).toHaveAttribute('href', '/book/book-1');
   });
@@ -191,9 +191,9 @@ describe('BookGrid', () => {
         thumbnail: undefined,
       },
     };
-    
+
     const { container } = render(<BookGrid books={[bookWithoutCover]} viewMode="grid" />);
-    
+
     const placeholder = container.querySelector('.lucide-book-marked');
     expect(placeholder).toBeInTheDocument();
   });
@@ -203,9 +203,9 @@ describe('BookGrid', () => {
       ...mockBook,
       status: 'READING',
     };
-    
+
     const { container } = render(<BookGrid books={[readingBook]} viewMode="grid" />);
-    
+
     const statusDot = container.querySelector('.bg-warning');
     expect(statusDot).toBeInTheDocument();
   });
@@ -222,9 +222,9 @@ describe('BookGrid', () => {
         },
       },
     ];
-    
+
     render(<BookGrid books={books} viewMode="grid" />);
-    
+
     expect(screen.getByText('Test Book')).toBeInTheDocument();
     expect(screen.getByText('Second Book')).toBeInTheDocument();
   });

@@ -38,11 +38,7 @@ export function TabBar() {
 
           if (isScanner) {
             return (
-              <Link
-                key={tab.href}
-                href={tab.href}
-                className="tab-item-scanner"
-              >
+              <Link key={tab.href} href={tab.href} className="tab-item-scanner">
                 <motion.div
                   className="tab-item-scanner-button"
                   whileTap={{ scale: 0.92 }}
@@ -55,34 +51,27 @@ export function TabBar() {
           }
 
           return (
-            <Link
-              key={tab.href}
-              href={tab.href}
-              className={cn('tab-item', isActive && 'active')}
-            >
+            <Link key={tab.href} href={tab.href} className={cn('tab-item', isActive && 'active')}>
               <motion.div
                 className="flex flex-col items-center gap-0.5"
                 whileTap={{ scale: 0.92 }}
                 transition={{ duration: 0.1 }}
               >
-                <Icon 
+                <Icon
                   className={cn(
                     'tab-item-icon transition-all duration-200',
                     isActive && 'scale-110'
-                  )} 
+                  )}
                   strokeWidth={isActive ? 2.5 : 2}
                 />
-                <span className={cn(
-                  'tab-item-label',
-                  isActive && 'font-semibold'
-                )}>
+                <span className={cn('tab-item-label', isActive && 'font-semibold')}>
                   {tab.name}
                 </span>
               </motion.div>
               {isActive && (
                 <motion.div
                   layoutId="activeTab"
-                  className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary"
+                  className="bg-primary absolute -bottom-0.5 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full"
                   transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                 />
               )}

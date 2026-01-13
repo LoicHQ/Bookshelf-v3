@@ -50,7 +50,7 @@ export default function LoginPage() {
         }
 
         setSuccess('Compte créé avec succès ! Connexion en cours...');
-        
+
         // Connexion automatique après inscription
         try {
           const result = await signIn('credentials', {
@@ -94,14 +94,14 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-background via-background to-secondary/20 p-4 safe-area-inset-top safe-area-inset-bottom">
-      <div className="w-full max-w-md space-y-8 animate-spring-in">
+    <div className="from-background via-background to-secondary/20 safe-area-inset-top safe-area-inset-bottom flex min-h-screen items-center justify-center bg-gradient-to-b p-4">
+      <div className="animate-spring-in w-full max-w-md space-y-8">
         {/* Header iOS-like */}
-        <div className="text-center space-y-3">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-primary/10 mb-2">
+        <div className="space-y-3 text-center">
+          <div className="bg-primary/10 mb-2 inline-flex h-20 w-20 items-center justify-center rounded-3xl">
             <span className="text-4xl">📚</span>
           </div>
-          <h1 className="text-5xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+          <h1 className="from-foreground to-foreground/70 bg-gradient-to-r bg-clip-text text-5xl font-bold tracking-tight text-transparent">
             BookShelf
           </h1>
           <p className="text-muted-foreground text-[17px] leading-relaxed">
@@ -112,7 +112,7 @@ export default function LoginPage() {
         {/* Card iOS-like avec glassmorphism */}
         <Card className="glass-card shadow-ios-lg border-border/40">
           <CardHeader className="space-y-2 pb-6">
-            <CardTitle className="text-3xl font-bold text-center">
+            <CardTitle className="text-center text-3xl font-bold">
               {isSignUp ? 'Créer un compte' : 'Connexion'}
             </CardTitle>
             <CardDescription className="text-center text-[15px]">
@@ -125,12 +125,12 @@ export default function LoginPage() {
             <form onSubmit={handleSubmit} className="space-y-5">
               {/* Messages d'erreur/succès iOS-like */}
               {error && (
-                <div className="rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200/50 dark:border-red-900/30 p-4 text-[15px] text-red-600 dark:text-red-400 animate-spring-in">
+                <div className="animate-spring-in rounded-2xl border border-red-200/50 bg-red-50 p-4 text-[15px] text-red-600 dark:border-red-900/30 dark:bg-red-950/40 dark:text-red-400">
                   {error}
                 </div>
               )}
               {success && (
-                <div className="rounded-2xl bg-green-50 dark:bg-green-950/40 border border-green-200/50 dark:border-green-900/30 p-4 text-[15px] text-green-600 dark:text-green-400 animate-spring-in">
+                <div className="animate-spring-in rounded-2xl border border-green-200/50 bg-green-50 p-4 text-[15px] text-green-600 dark:border-green-900/30 dark:bg-green-950/40 dark:text-green-400">
                   {success}
                 </div>
               )}
@@ -138,7 +138,7 @@ export default function LoginPage() {
               {/* Champ Nom (inscription uniquement) */}
               {isSignUp && (
                 <div className="space-y-2.5">
-                  <label htmlFor="name" className="text-[15px] font-semibold text-foreground/90">
+                  <label htmlFor="name" className="text-foreground/90 text-[15px] font-semibold">
                     Nom (optionnel)
                   </label>
                   <Input
@@ -155,7 +155,7 @@ export default function LoginPage() {
 
               {/* Champ Email */}
               <div className="space-y-2.5">
-                <label htmlFor="email" className="text-[15px] font-semibold text-foreground/90">
+                <label htmlFor="email" className="text-foreground/90 text-[15px] font-semibold">
                   Email
                 </label>
                 <Input
@@ -173,7 +173,7 @@ export default function LoginPage() {
 
               {/* Champ Password avec toggle */}
               <div className="space-y-2.5">
-                <label htmlFor="password" className="text-[15px] font-semibold text-foreground/90">
+                <label htmlFor="password" className="text-foreground/90 text-[15px] font-semibold">
                   Mot de passe
                 </label>
                 <div className="relative">
@@ -184,25 +184,21 @@ export default function LoginPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     placeholder={isSignUp ? 'Minimum 8 caractères' : 'Votre mot de passe'}
-                    className="h-14 text-[17px] pr-12"
+                    className="h-14 pr-12 text-[17px]"
                     disabled={loading}
                     autoComplete={isSignUp ? 'new-password' : 'current-password'}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-muted-foreground hover:text-foreground transition-colors rounded-xl active:scale-95"
+                    className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2 rounded-xl p-2 transition-colors active:scale-95"
                     tabIndex={-1}
                   >
-                    {showPassword ? (
-                      <EyeOff className="h-5 w-5" />
-                    ) : (
-                      <Eye className="h-5 w-5" />
-                    )}
+                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                   </button>
                 </div>
                 {isSignUp && (
-                  <p className="text-[13px] text-muted-foreground">
+                  <p className="text-muted-foreground text-[13px]">
                     Au moins 8 caractères avec majuscule, minuscule et chiffre
                   </p>
                 )}
@@ -211,7 +207,7 @@ export default function LoginPage() {
               {/* Bouton Submit iOS-like */}
               <Button
                 type="submit"
-                className="w-full h-14 text-[17px] font-semibold shadow-ios-sm"
+                className="shadow-ios-sm h-14 w-full text-[17px] font-semibold"
                 disabled={loading}
               >
                 {loading ? (
@@ -230,10 +226,10 @@ export default function LoginPage() {
             {/* Séparateur iOS-like */}
             <div className="relative my-6">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-border/30" />
+                <div className="border-border/30 w-full border-t" />
               </div>
               <div className="relative flex justify-center text-xs">
-                <span className="bg-card px-4 text-muted-foreground text-[13px]">
+                <span className="bg-card text-muted-foreground px-4 text-[13px]">
                   Ou continuer avec
                 </span>
               </div>
@@ -243,7 +239,7 @@ export default function LoginPage() {
             <div className="space-y-3">
               <Button
                 variant="outline"
-                className="w-full h-14 text-[17px] font-medium glass-card border-border/40"
+                className="glass-card border-border/40 h-14 w-full text-[17px] font-medium"
                 onClick={() => signIn('google')}
                 disabled={loading}
               >
@@ -251,7 +247,7 @@ export default function LoginPage() {
               </Button>
               <Button
                 variant="outline"
-                className="w-full h-14 text-[17px] font-medium glass-card border-border/40"
+                className="glass-card border-border/40 h-14 w-full text-[17px] font-medium"
                 onClick={() => signIn('github')}
                 disabled={loading}
               >
@@ -260,7 +256,7 @@ export default function LoginPage() {
             </div>
 
             {/* Toggle Inscription/Connexion */}
-            <div className="text-center pt-2">
+            <div className="pt-2 text-center">
               <button
                 type="button"
                 onClick={() => {
@@ -269,12 +265,10 @@ export default function LoginPage() {
                   setSuccess('');
                   setPassword('');
                 }}
-                className="text-primary text-[15px] font-semibold hover:opacity-80 transition-opacity active:scale-95"
+                className="text-primary text-[15px] font-semibold transition-opacity hover:opacity-80 active:scale-95"
                 disabled={loading}
               >
-                {isSignUp
-                  ? 'Déjà un compte ? Se connecter'
-                  : "Pas de compte ? S'inscrire"}
+                {isSignUp ? 'Déjà un compte ? Se connecter' : "Pas de compte ? S'inscrire"}
               </button>
             </div>
           </CardContent>

@@ -118,6 +118,7 @@ model UserBook {
   bookNotes       BookNote[]
   readingSessions ReadingSession[]
   collectionBooks CollectionBook[]
+  userBookImages  UserBookImage[]
 
   @@unique([userId, bookId])
   @@index([userId])
@@ -132,6 +133,21 @@ enum BookStatus {
   COMPLETED
   ABANDONED
   ON_HOLD
+}
+
+model UserBookImage {
+  id         String   @id @default(cuid())
+  userBookId String
+  imageUrl   String   // URL de l'image (Cloudinary ou autre)
+  source     String   @default("user") // Pour distinguer les sources
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  userBook UserBook @relation(fields: [userBookId], references: [id], onDelete: Cascade)
+
+  @@unique([userBookId, imageUrl]) // Éviter les doublons
+  @@index([userBookId])
 }
 
 // ============================================================================

@@ -31,11 +31,11 @@ export function SearchBar({
     <div className={cn('relative', className)}>
       <div
         className={cn(
-          'flex items-center gap-2 rounded-2xl bg-secondary/80 px-4 transition-all duration-200',
-          isFocused && 'bg-secondary ring-2 ring-primary/20'
+          'bg-secondary/80 flex items-center gap-2 rounded-2xl px-4 transition-all duration-200',
+          isFocused && 'bg-secondary ring-primary/20 ring-2'
         )}
       >
-        <Search className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+        <Search className="text-muted-foreground h-5 w-5 flex-shrink-0" />
         <Input
           ref={inputRef}
           type="text"
@@ -44,7 +44,7 @@ export function SearchBar({
           placeholder={placeholder}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
-          className="flex-1 border-0 bg-transparent px-0 h-11 text-base placeholder:text-muted-foreground focus-visible:ring-0 focus-visible:ring-offset-0"
+          className="placeholder:text-muted-foreground h-11 flex-1 border-0 bg-transparent px-0 text-base focus-visible:ring-0 focus-visible:ring-offset-0"
         />
         <AnimatePresence>
           {value && (
@@ -56,9 +56,9 @@ export function SearchBar({
                 onChange('');
                 inputRef.current?.focus();
               }}
-              className="p-1 rounded-full hover:bg-muted"
+              className="hover:bg-muted rounded-full p-1"
             >
-              <X className="h-4 w-4 text-muted-foreground" />
+              <X className="text-muted-foreground h-4 w-4" />
             </motion.button>
           )}
         </AnimatePresence>

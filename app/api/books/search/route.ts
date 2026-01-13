@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const query = Object.fromEntries(searchParams.entries());
-    
+
     const validatedQuery = searchBooksQuerySchema.parse(query);
 
     let results;
@@ -25,7 +25,8 @@ export async function GET(request: NextRequest) {
         const book = await fetchBookByISBN(validatedQuery.isbn);
         results = book ? [book] : [];
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Erreur lors de la recherche par ISBN';
+        const errorMessage =
+          error instanceof Error ? error.message : 'Erreur lors de la recherche par ISBN';
         throw new ValidationError(errorMessage);
       }
     } else if (validatedQuery.q) {

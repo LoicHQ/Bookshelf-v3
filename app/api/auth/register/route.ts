@@ -14,7 +14,7 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     const validatedData = registerUserSchema.parse(body);
-    
+
     const user = await UserService.createUser(validatedData);
 
     return NextResponse.json(

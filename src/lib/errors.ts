@@ -16,7 +16,10 @@ export class AppError extends Error {
 }
 
 export class ValidationError extends AppError {
-  constructor(message: string, public errors?: unknown[]) {
+  constructor(
+    message: string,
+    public errors?: unknown[]
+  ) {
     super(message, 400, 'VALIDATION_ERROR');
   }
 }
@@ -42,7 +45,11 @@ export class ConflictError extends AppError {
 /**
  * Convertit une erreur en réponse JSON standardisée
  */
-export function errorToResponse(error: unknown): { error: string; code?: string; statusCode: number } {
+export function errorToResponse(error: unknown): {
+  error: string;
+  code?: string;
+  statusCode: number;
+} {
   if (error instanceof AppError) {
     return {
       error: error.message,

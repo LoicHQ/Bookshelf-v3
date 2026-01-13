@@ -20,7 +20,7 @@ import {
   StickyNote,
   Highlighter,
   Plus,
-  Check
+  Check,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -206,12 +206,13 @@ export default function BookDetailPage() {
   }
 
   const book = userBook.book;
-  const progress = userBook.currentPage && book.pageCount
-    ? Math.min((userBook.currentPage / book.pageCount) * 100, 100)
-    : 0;
+  const progress =
+    userBook.currentPage && book.pageCount
+      ? Math.min((userBook.currentPage / book.pageCount) * 100, 100)
+      : 0;
 
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <div className="bg-background min-h-screen pb-24">
       {/* Hero Header with Blur Background */}
       <div className="relative">
         {/* Blurred Background */}
@@ -221,13 +222,13 @@ export default function BookDetailPage() {
               src={book.coverImage || book.thumbnail || ''}
               alt=""
               fill
-              className="object-cover scale-110 blur-3xl opacity-30"
+              className="scale-110 object-cover opacity-30 blur-3xl"
               sizes="100vw"
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-b from-primary/20 to-transparent" />
+            <div className="from-primary/20 h-full w-full bg-gradient-to-b to-transparent" />
           )}
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/50 to-background" />
+          <div className="via-background/50 to-background absolute inset-0 bg-gradient-to-b from-transparent" />
         </div>
 
         {/* Navigation */}
@@ -236,7 +237,7 @@ export default function BookDetailPage() {
             variant="ghost"
             size="icon"
             onClick={() => router.back()}
-            className="h-10 w-10 rounded-full bg-background/50 backdrop-blur-sm"
+            className="bg-background/50 h-10 w-10 rounded-full backdrop-blur-sm"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
@@ -245,7 +246,7 @@ export default function BookDetailPage() {
               variant="ghost"
               size="icon"
               onClick={handleFavoriteToggle}
-              className="h-10 w-10 rounded-full bg-background/50 backdrop-blur-sm"
+              className="bg-background/50 h-10 w-10 rounded-full backdrop-blur-sm"
             >
               <Heart className={cn('h-5 w-5', userBook.favorite && 'fill-red-500 text-red-500')} />
             </Button>
@@ -253,7 +254,7 @@ export default function BookDetailPage() {
               variant="ghost"
               size="icon"
               onClick={handleShare}
-              className="h-10 w-10 rounded-full bg-background/50 backdrop-blur-sm"
+              className="bg-background/50 h-10 w-10 rounded-full backdrop-blur-sm"
             >
               <Share2 className="h-5 w-5" />
             </Button>
@@ -262,18 +263,18 @@ export default function BookDetailPage() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-10 w-10 rounded-full bg-background/50 backdrop-blur-sm"
+                  className="bg-background/50 h-10 w-10 rounded-full backdrop-blur-sm"
                 >
                   <MoreHorizontal className="h-5 w-5" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem>
-                  <Edit3 className="h-4 w-4 mr-2" /> Modifier
+                  <Edit3 className="mr-2 h-4 w-4" /> Modifier
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleDelete} className="text-destructive">
-                  <Trash2 className="h-4 w-4 mr-2" /> Supprimer
+                  <Trash2 className="mr-2 h-4 w-4" /> Supprimer
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -298,23 +299,19 @@ export default function BookDetailPage() {
                   priority
                 />
               ) : (
-                <div className="flex h-full w-full items-center justify-center bg-muted">
-                  <BookMarked className="h-12 w-12 text-muted-foreground" />
+                <div className="bg-muted flex h-full w-full items-center justify-center">
+                  <BookMarked className="text-muted-foreground h-12 w-12" />
                 </div>
               )}
             </motion.div>
-            <div className="flex-1 min-w-0 pt-4">
-              <h1 className="text-xl font-bold line-clamp-3 mb-1">{book.title}</h1>
+            <div className="min-w-0 flex-1 pt-4">
+              <h1 className="mb-1 line-clamp-3 text-xl font-bold">{book.title}</h1>
               <p className="text-muted-foreground mb-3">{book.authors?.join(', ')}</p>
-              
+
               {/* Rating */}
-              <div className="flex items-center gap-1 mb-3">
+              <div className="mb-3 flex items-center gap-1">
                 {[1, 2, 3, 4, 5].map((star) => (
-                  <button
-                    key={star}
-                    onClick={() => handleRatingChange(star)}
-                    className="p-0.5"
-                  >
+                  <button key={star} onClick={() => handleRatingChange(star)} className="p-0.5">
                     <Star
                       className={cn(
                         'h-5 w-5 transition-colors',
@@ -328,8 +325,11 @@ export default function BookDetailPage() {
               </div>
 
               {/* Status Selector */}
-              <Select value={userBook.status} onValueChange={(v) => handleStatusChange(v as BookStatus)}>
-                <SelectTrigger className="w-full h-9 rounded-full">
+              <Select
+                value={userBook.status}
+                onValueChange={(v) => handleStatusChange(v as BookStatus)}
+              >
+                <SelectTrigger className="h-9 w-full rounded-full">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -347,14 +347,14 @@ export default function BookDetailPage() {
 
       {/* Reading Progress */}
       {userBook.status === 'READING' && book.pageCount && (
-        <div className="px-5 mb-6">
+        <div className="mb-6 px-5">
           <Card className="card-ios">
             <CardContent className="p-4">
-              <div className="flex items-center justify-between mb-2">
+              <div className="mb-2 flex items-center justify-between">
                 <span className="text-sm font-medium">Progression</span>
-                <span className="text-sm text-muted-foreground">{Math.round(progress)}%</span>
+                <span className="text-muted-foreground text-sm">{Math.round(progress)}%</span>
               </div>
-              <Progress value={progress} className="h-2 mb-3" />
+              <Progress value={progress} className="mb-3 h-2" />
               {editingProgress ? (
                 <div className="flex items-center gap-2">
                   <Input
@@ -366,7 +366,7 @@ export default function BookDetailPage() {
                     min={0}
                     max={book.pageCount}
                   />
-                  <span className="text-sm text-muted-foreground">/ {book.pageCount}</span>
+                  <span className="text-muted-foreground text-sm">/ {book.pageCount}</span>
                   <Button size="sm" onClick={handleProgressUpdate}>
                     <Check className="h-4 w-4" />
                   </Button>
@@ -374,7 +374,7 @@ export default function BookDetailPage() {
               ) : (
                 <button
                   onClick={() => setEditingProgress(true)}
-                  className="text-sm text-primary flex items-center gap-1"
+                  className="text-primary flex items-center gap-1 text-sm"
                 >
                   <Edit3 className="h-3 w-3" />
                   Page {userBook.currentPage || 0} sur {book.pageCount}
@@ -388,10 +388,16 @@ export default function BookDetailPage() {
       {/* Tabs */}
       <div className="px-5">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-3 h-10 p-1 bg-secondary/50 rounded-xl mb-4">
-            <TabsTrigger value="info" className="rounded-lg text-sm">Infos</TabsTrigger>
-            <TabsTrigger value="notes" className="rounded-lg text-sm">Notes</TabsTrigger>
-            <TabsTrigger value="details" className="rounded-lg text-sm">Détails</TabsTrigger>
+          <TabsList className="bg-secondary/50 mb-4 grid h-10 w-full grid-cols-3 rounded-xl p-1">
+            <TabsTrigger value="info" className="rounded-lg text-sm">
+              Infos
+            </TabsTrigger>
+            <TabsTrigger value="notes" className="rounded-lg text-sm">
+              Notes
+            </TabsTrigger>
+            <TabsTrigger value="details" className="rounded-lg text-sm">
+              Détails
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="info" className="space-y-4">
@@ -402,7 +408,7 @@ export default function BookDetailPage() {
                   <CardTitle className="text-base">Description</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
+                  <p className="text-muted-foreground text-sm leading-relaxed">
                     {book.description}
                   </p>
                 </CardContent>
@@ -424,10 +430,10 @@ export default function BookDetailPage() {
             <div className="grid grid-cols-2 gap-3">
               {book.pageCount && (
                 <Card className="card-ios">
-                  <CardContent className="p-4 flex items-center gap-3">
-                    <BookOpen className="h-5 w-5 text-muted-foreground" />
+                  <CardContent className="flex items-center gap-3 p-4">
+                    <BookOpen className="text-muted-foreground h-5 w-5" />
                     <div>
-                      <p className="text-sm text-muted-foreground">Pages</p>
+                      <p className="text-muted-foreground text-sm">Pages</p>
                       <p className="font-semibold">{book.pageCount}</p>
                     </div>
                   </CardContent>
@@ -435,10 +441,10 @@ export default function BookDetailPage() {
               )}
               {book.publishedDate && (
                 <Card className="card-ios">
-                  <CardContent className="p-4 flex items-center gap-3">
-                    <Calendar className="h-5 w-5 text-muted-foreground" />
+                  <CardContent className="flex items-center gap-3 p-4">
+                    <Calendar className="text-muted-foreground h-5 w-5" />
                     <div>
-                      <p className="text-sm text-muted-foreground">Publication</p>
+                      <p className="text-muted-foreground text-sm">Publication</p>
                       <p className="font-semibold">{book.publishedDate}</p>
                     </div>
                   </CardContent>
@@ -455,11 +461,11 @@ export default function BookDetailPage() {
                 variant="outline"
                 className="w-full rounded-xl"
               >
-                <Plus className="h-4 w-4 mr-2" /> Ajouter une note
+                <Plus className="mr-2 h-4 w-4" /> Ajouter une note
               </Button>
             ) : (
               <Card className="card-ios">
-                <CardContent className="p-4 space-y-3">
+                <CardContent className="space-y-3 p-4">
                   <div className="flex gap-2">
                     {NOTE_TYPES.map((type) => {
                       const Icon = type.icon;
@@ -468,7 +474,7 @@ export default function BookDetailPage() {
                           key={type.value}
                           onClick={() => setNewNoteType(type.value)}
                           className={cn(
-                            'flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm transition-colors',
+                            'flex flex-1 items-center justify-center gap-2 rounded-lg py-2 text-sm transition-colors',
                             newNoteType === type.value
                               ? 'bg-primary text-primary-foreground'
                               : 'bg-secondary'
@@ -498,9 +504,7 @@ export default function BookDetailPage() {
                     <Button variant="ghost" onClick={() => setShowNoteForm(false)}>
                       Annuler
                     </Button>
-                    <Button disabled={!newNote.trim()}>
-                      Enregistrer
-                    </Button>
+                    <Button disabled={!newNote.trim()}>Enregistrer</Button>
                   </div>
                 </CardContent>
               </Card>
@@ -508,27 +512,26 @@ export default function BookDetailPage() {
 
             {/* Notes List */}
             {notes.length === 0 && !showNoteForm ? (
-              <div className="text-center py-12">
-                <StickyNote className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
+              <div className="py-12 text-center">
+                <StickyNote className="text-muted-foreground/30 mx-auto mb-3 h-12 w-12" />
                 <p className="text-muted-foreground">Aucune note pour ce livre</p>
               </div>
             ) : (
               <div className="space-y-3">
                 {notes.map((note) => {
-                  const TypeIcon = NOTE_TYPES.find(t => t.value === note.type)?.icon || StickyNote;
+                  const TypeIcon =
+                    NOTE_TYPES.find((t) => t.value === note.type)?.icon || StickyNote;
                   return (
                     <Card key={note.id} className="card-ios">
                       <CardContent className="p-4">
                         <div className="flex items-start gap-3">
-                          <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center flex-shrink-0">
-                            <TypeIcon className="h-4 w-4 text-muted-foreground" />
+                          <div className="bg-secondary flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg">
+                            <TypeIcon className="text-muted-foreground h-4 w-4" />
                           </div>
-                          <div className="flex-1 min-w-0">
+                          <div className="min-w-0 flex-1">
                             <p className="text-sm whitespace-pre-wrap">{note.content}</p>
                             {note.page && (
-                              <p className="text-xs text-muted-foreground mt-2">
-                                Page {note.page}
-                              </p>
+                              <p className="text-muted-foreground mt-2 text-xs">Page {note.page}</p>
                             )}
                           </div>
                         </div>
@@ -542,7 +545,7 @@ export default function BookDetailPage() {
 
           <TabsContent value="details" className="space-y-3">
             <Card className="card-ios">
-              <CardContent className="p-0 divide-y divide-border">
+              <CardContent className="divide-border divide-y p-0">
                 {book.publisher && (
                   <div className="flex justify-between p-4">
                     <span className="text-muted-foreground">Éditeur</span>
@@ -552,13 +555,13 @@ export default function BookDetailPage() {
                 {book.isbn13 && (
                   <div className="flex justify-between p-4">
                     <span className="text-muted-foreground">ISBN-13</span>
-                    <span className="font-medium font-mono">{book.isbn13}</span>
+                    <span className="font-mono font-medium">{book.isbn13}</span>
                   </div>
                 )}
                 {book.isbn && (
                   <div className="flex justify-between p-4">
                     <span className="text-muted-foreground">ISBN-10</span>
-                    <span className="font-medium font-mono">{book.isbn}</span>
+                    <span className="font-mono font-medium">{book.isbn}</span>
                   </div>
                 )}
                 {book.language && (
@@ -594,9 +597,9 @@ export default function BookDetailPage() {
 
 function BookDetailSkeleton() {
   return (
-    <div className="min-h-screen bg-background">
-      <div className="h-72 relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-muted/50 to-background" />
+    <div className="bg-background min-h-screen">
+      <div className="relative h-72">
+        <div className="from-muted/50 to-background absolute inset-0 bg-gradient-to-b" />
         <header className="relative z-10 flex items-center justify-between p-4">
           <Skeleton className="h-10 w-10 rounded-full" />
           <div className="flex gap-2">
@@ -607,7 +610,7 @@ function BookDetailSkeleton() {
         <div className="relative z-10 px-5 pb-6">
           <div className="flex gap-5">
             <Skeleton className="h-48 w-32 rounded-2xl" />
-            <div className="flex-1 pt-4 space-y-3">
+            <div className="flex-1 space-y-3 pt-4">
               <Skeleton className="h-6 w-full" />
               <Skeleton className="h-4 w-32" />
               <Skeleton className="h-5 w-28" />
@@ -616,7 +619,7 @@ function BookDetailSkeleton() {
           </div>
         </div>
       </div>
-      <div className="px-5 space-y-4">
+      <div className="space-y-4 px-5">
         <Skeleton className="h-10 w-full rounded-xl" />
         <Skeleton className="h-32 w-full rounded-2xl" />
         <Skeleton className="h-24 w-full rounded-2xl" />

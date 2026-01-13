@@ -217,9 +217,9 @@ describe('BookService', () => {
     it('should throw NotFoundError if userBook not found', async () => {
       vi.mocked(prisma.userBook.findFirst).mockResolvedValue(null);
 
-      await expect(
-        BookService.removeBookFromLibrary('user-1', 'userbook-1')
-      ).rejects.toThrow(NotFoundError);
+      await expect(BookService.removeBookFromLibrary('user-1', 'userbook-1')).rejects.toThrow(
+        NotFoundError
+      );
     });
   });
 });

@@ -1,5 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { fetchBookByISBN, searchBooks, searchGoogleBooks, searchOpenLibrary } from '@/lib/books-api';
+import {
+  fetchBookByISBN,
+  searchBooks,
+  searchGoogleBooks,
+  searchOpenLibrary,
+} from '@/lib/books-api';
 
 // Mock fetch global
 global.fetch = vi.fn();

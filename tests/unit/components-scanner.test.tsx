@@ -48,7 +48,7 @@ describe('BarcodeScanner', () => {
 
   it('should initialize scanner when active', async () => {
     render(<BarcodeScanner onScan={mockOnScan} isActive={true} />);
-    
+
     await waitFor(() => {
       expect(mockStart).toHaveBeenCalled();
     });
@@ -56,13 +56,13 @@ describe('BarcodeScanner', () => {
 
   it('should not initialize scanner when inactive', () => {
     render(<BarcodeScanner onScan={mockOnScan} isActive={false} />);
-    
+
     expect(mockStart).not.toHaveBeenCalled();
   });
 
   it('should call onScan when code is detected', async () => {
     render(<BarcodeScanner onScan={mockOnScan} isActive={true} />);
-    
+
     await waitFor(() => {
       expect(mockStart).toHaveBeenCalled();
     });
@@ -84,7 +84,7 @@ describe('BarcodeScanner', () => {
     mockStart.mockRejectedValue(permissionError);
 
     render(<BarcodeScanner onScan={mockOnScan} onError={mockOnError} isActive={true} />);
-    
+
     await waitFor(() => {
       expect(screen.getByText(/Accès caméra refusé/i)).toBeInTheDocument();
       expect(mockOnError).toHaveBeenCalledWith('Impossible de démarrer la caméra');
@@ -93,7 +93,7 @@ describe('BarcodeScanner', () => {
 
   it('should stop scanner when inactive', async () => {
     const { rerender } = render(<BarcodeScanner onScan={mockOnScan} isActive={true} />);
-    
+
     await waitFor(() => {
       expect(mockStart).toHaveBeenCalled();
     });
@@ -107,7 +107,7 @@ describe('BarcodeScanner', () => {
 
   it('should vibrate on successful scan', async () => {
     render(<BarcodeScanner onScan={mockOnScan} isActive={true} />);
-    
+
     await waitFor(() => {
       expect(mockStart).toHaveBeenCalled();
     });
@@ -125,7 +125,7 @@ describe('BarcodeScanner', () => {
 
   it('should prevent duplicate scans of same code', async () => {
     render(<BarcodeScanner onScan={mockOnScan} isActive={true} />);
-    
+
     await waitFor(() => {
       expect(mockStart).toHaveBeenCalled();
     });
@@ -134,11 +134,11 @@ describe('BarcodeScanner', () => {
     if (callArgs && callArgs.length > 2 && typeof callArgs[2] === 'function') {
       const scanCallback = callArgs[2];
       const isbn = '9781234567890';
-      
+
       // First scan
       scanCallback(isbn);
       expect(mockOnScan).toHaveBeenCalledTimes(1);
-      
+
       // Duplicate scan (should be ignored)
       scanCallback(isbn);
       expect(mockOnScan).toHaveBeenCalledTimes(1);
@@ -147,7 +147,7 @@ describe('BarcodeScanner', () => {
 
   it('should render scanner container with correct id', () => {
     render(<BarcodeScanner onScan={mockOnScan} isActive={true} />);
-    
+
     const container = document.getElementById('barcode-scanner');
     expect(container).toBeInTheDocument();
   });
@@ -157,7 +157,7 @@ describe('BarcodeScanner', () => {
     mockStart.mockRejectedValue(error);
 
     render(<BarcodeScanner onScan={mockOnScan} onError={mockOnError} isActive={true} />);
-    
+
     await waitFor(() => {
       expect(mockOnError).toHaveBeenCalledWith('Impossible de démarrer la caméra');
     });
@@ -165,7 +165,7 @@ describe('BarcodeScanner', () => {
 
   it('should render switch camera button', () => {
     render(<BarcodeScanner onScan={mockOnScan} isActive={true} />);
-    
+
     const switchButton = screen.getByRole('button');
     expect(switchButton).toBeInTheDocument();
   });

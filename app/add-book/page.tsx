@@ -30,7 +30,9 @@ export default function AddBookPage() {
       if (response.ok && data.results && data.results.length > 0) {
         setBook(data.results[0]);
       } else {
-        setError(data.error || "Livre non trouvé. Vérifiez l'ISBN (doit contenir 10 ou 13 chiffres).");
+        setError(
+          data.error || "Livre non trouvé. Vérifiez l'ISBN (doit contenir 10 ou 13 chiffres)."
+        );
       }
     } catch {
       setError('Erreur lors de la recherche');
@@ -67,10 +69,10 @@ export default function AddBookPage() {
   };
 
   return (
-    <div className="container mx-auto max-w-2xl p-6 pb-24 safe-area-inset-top">
+    <div className="safe-area-inset-top container mx-auto max-w-2xl p-6 pb-24">
       {/* Header iOS-like */}
-      <div className="mb-8 space-y-3 animate-spring-in">
-        <h1 className="text-5xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+      <div className="animate-spring-in mb-8 space-y-3">
+        <h1 className="from-foreground to-foreground/70 bg-gradient-to-r bg-clip-text text-5xl font-bold tracking-tight text-transparent">
           Ajouter un livre
         </h1>
         <p className="text-muted-foreground text-[17px] leading-relaxed">
@@ -96,14 +98,14 @@ export default function AddBookPage() {
                 value={isbn}
                 onChange={(e) => setIsbn(e.target.value)}
                 disabled={loading}
-                className="flex-1 h-14 text-[17px]"
+                className="h-14 flex-1 text-[17px]"
                 autoFocus
               />
               <Button
                 type="submit"
                 disabled={loading || !isbn}
                 size="icon"
-                className="h-14 w-14 shadow-ios-sm"
+                className="shadow-ios-sm h-14 w-14"
               >
                 {loading ? (
                   <Loader2 className="h-5 w-5 animate-spin" />
@@ -115,7 +117,7 @@ export default function AddBookPage() {
 
             {/* Message d'erreur iOS-like */}
             {error && (
-              <div className="rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200/50 dark:border-red-900/30 p-4 text-[15px] text-red-600 dark:text-red-400 animate-spring-in">
+              <div className="animate-spring-in rounded-2xl border border-red-200/50 bg-red-50 p-4 text-[15px] text-red-600 dark:border-red-900/30 dark:bg-red-950/40 dark:text-red-400">
                 {error}
               </div>
             )}
@@ -123,7 +125,7 @@ export default function AddBookPage() {
 
           {/* Résultat de recherche iOS-like */}
           {book && (
-            <div className="space-y-6 pt-6 border-t border-border/30 animate-spring-in">
+            <div className="border-border/30 animate-spring-in space-y-6 border-t pt-6">
               <div>
                 <h3 className="mb-5 text-xl font-bold">Livre trouvé :</h3>
                 <BookCard book={book} showStatus={false} showRating={false} />
@@ -131,7 +133,7 @@ export default function AddBookPage() {
               <Button
                 onClick={handleAdd}
                 disabled={loading}
-                className="w-full h-14 text-[17px] font-semibold shadow-ios-sm"
+                className="shadow-ios-sm h-14 w-full text-[17px] font-semibold"
               >
                 {loading ? (
                   <>

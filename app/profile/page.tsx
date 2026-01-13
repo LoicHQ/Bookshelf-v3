@@ -50,13 +50,13 @@ const container = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
-    transition: { staggerChildren: 0.05 }
-  }
+    transition: { staggerChildren: 0.05 },
+  },
 };
 
 const item = {
   hidden: { opacity: 0, y: 10 },
-  show: { opacity: 1, y: 0 }
+  show: { opacity: 1, y: 0 },
 };
 
 export default function ProfilePage() {
@@ -89,77 +89,80 @@ export default function ProfilePage() {
   };
 
   const stats = useMemo(() => {
-    const completed = books.filter(b => b.status === 'COMPLETED' && !b.isWishlist).length;
+    const completed = books.filter((b) => b.status === 'COMPLETED' && !b.isWishlist).length;
     const pagesRead = books
-      .filter(b => b.status === 'COMPLETED')
+      .filter((b) => b.status === 'COMPLETED')
       .reduce((sum, b) => sum + (b.book?.pageCount || 0), 0);
-    const avgRating = books.filter(b => b.rating).reduce((sum, b, _, arr) => 
-      sum + (b.rating || 0) / arr.length, 0
-    );
-    
+    const avgRating = books
+      .filter((b) => b.rating)
+      .reduce((sum, b, _, arr) => sum + (b.rating || 0) / arr.length, 0);
+
     return { completed, pagesRead, avgRating: avgRating.toFixed(1) };
   }, [books]);
 
-  const achievements: Achievement[] = useMemo(() => [
-    {
-      id: 'first-book',
-      name: 'Premier pas',
-      description: 'Ajouter votre premier livre',
-      icon: BookOpen,
-      color: 'text-primary bg-primary/10',
-      unlocked: books.length > 0,
-    },
-    {
-      id: 'bookworm',
-      name: 'Rat de bibliothèque',
-      description: 'Lire 10 livres',
-      icon: BookCheck,
-      color: 'text-success bg-success/10',
-      unlocked: stats.completed >= 10,
-      progress: stats.completed,
-      target: 10,
-    },
-    {
-      id: 'voracious',
-      name: 'Lecteur vorace',
-      description: 'Lire 50 livres',
-      icon: Trophy,
-      color: 'text-warning bg-warning/10',
-      unlocked: stats.completed >= 50,
-      progress: stats.completed,
-      target: 50,
-    },
-    {
-      id: 'page-turner',
-      name: 'Tourne-pages',
-      description: 'Lire 5000 pages',
-      icon: Sparkles,
-      color: 'text-info bg-info/10',
-      unlocked: stats.pagesRead >= 5000,
-      progress: stats.pagesRead,
-      target: 5000,
-    },
-    {
-      id: 'critic',
-      name: 'Critique littéraire',
-      description: 'Noter 20 livres',
-      icon: Star,
-      color: 'text-yellow-500 bg-yellow-500/10',
-      unlocked: books.filter(b => b.rating).length >= 20,
-      progress: books.filter(b => b.rating).length,
-      target: 20,
-    },
-    {
-      id: 'streak',
-      name: 'En feu',
-      description: '7 jours de lecture consécutifs',
-      icon: Flame,
-      color: 'text-orange-500 bg-orange-500/10',
-      unlocked: false,
-    },
-  ], [books, stats]);
+  const achievements: Achievement[] = useMemo(
+    () => [
+      {
+        id: 'first-book',
+        name: 'Premier pas',
+        description: 'Ajouter votre premier livre',
+        icon: BookOpen,
+        color: 'text-primary bg-primary/10',
+        unlocked: books.length > 0,
+      },
+      {
+        id: 'bookworm',
+        name: 'Rat de bibliothèque',
+        description: 'Lire 10 livres',
+        icon: BookCheck,
+        color: 'text-success bg-success/10',
+        unlocked: stats.completed >= 10,
+        progress: stats.completed,
+        target: 10,
+      },
+      {
+        id: 'voracious',
+        name: 'Lecteur vorace',
+        description: 'Lire 50 livres',
+        icon: Trophy,
+        color: 'text-warning bg-warning/10',
+        unlocked: stats.completed >= 50,
+        progress: stats.completed,
+        target: 50,
+      },
+      {
+        id: 'page-turner',
+        name: 'Tourne-pages',
+        description: 'Lire 5000 pages',
+        icon: Sparkles,
+        color: 'text-info bg-info/10',
+        unlocked: stats.pagesRead >= 5000,
+        progress: stats.pagesRead,
+        target: 5000,
+      },
+      {
+        id: 'critic',
+        name: 'Critique littéraire',
+        description: 'Noter 20 livres',
+        icon: Star,
+        color: 'text-yellow-500 bg-yellow-500/10',
+        unlocked: books.filter((b) => b.rating).length >= 20,
+        progress: books.filter((b) => b.rating).length,
+        target: 20,
+      },
+      {
+        id: 'streak',
+        name: 'En feu',
+        description: '7 jours de lecture consécutifs',
+        icon: Flame,
+        color: 'text-orange-500 bg-orange-500/10',
+        unlocked: false,
+      },
+    ],
+    [books, stats]
+  );
 
-  const unlockedCount = achievements.filter(a => a.unlocked).length;
+  const unlockedCount = achievements.filter((a) => a.unlocked).length;
 
   const toggleDarkMode = () => {
     const newMode = !darkMode;
@@ -176,7 +179,7 @@ export default function ProfilePage() {
   const handleExport = async () => {
     const data = {
       exportDate: new Date().toISOString(),
-      books: books.map(b => ({
+      books: books.map((b) => ({
         title: b.book?.title,
         authors: b.book?.authors,
         status: b.status,
@@ -185,7 +188,7 @@ export default function ProfilePage() {
         endDate: b.endDate,
       })),
     };
-    
+
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -219,7 +222,7 @@ export default function ProfilePage() {
 
   return (
     <motion.div
-      className="min-h-screen bg-background pb-24"
+      className="bg-background min-h-screen pb-24"
       variants={container}
       initial="hidden"
       animate="show"
@@ -227,9 +230,9 @@ export default function ProfilePage() {
       {/* Profile Header */}
       <motion.header variants={item} className="px-5 pt-4 pb-6">
         <div className="flex items-center gap-4">
-          <Avatar className="h-20 w-20 ring-4 ring-primary/20">
+          <Avatar className="ring-primary/20 h-20 w-20 ring-4">
             <AvatarImage src={undefined} />
-            <AvatarFallback className="text-2xl font-bold bg-primary/10 text-primary">
+            <AvatarFallback className="bg-primary/10 text-primary text-2xl font-bold">
               U
             </AvatarFallback>
           </Avatar>
@@ -241,21 +244,23 @@ export default function ProfilePage() {
       </motion.header>
 
       {/* Quick Stats */}
-      <motion.div variants={item} className="px-5 mb-6">
+      <motion.div variants={item} className="mb-6 px-5">
         <Card className="card-ios">
           <CardContent className="p-0">
-            <div className="grid grid-cols-3 divide-x divide-border">
+            <div className="divide-border grid grid-cols-3 divide-x">
               <div className="p-4 text-center">
-                <p className="text-2xl font-bold text-primary">{stats.completed}</p>
-                <p className="text-xs text-muted-foreground">Livres lus</p>
+                <p className="text-primary text-2xl font-bold">{stats.completed}</p>
+                <p className="text-muted-foreground text-xs">Livres lus</p>
               </div>
               <div className="p-4 text-center">
-                <p className="text-2xl font-bold text-success">{stats.pagesRead.toLocaleString()}</p>
-                <p className="text-xs text-muted-foreground">Pages</p>
+                <p className="text-success text-2xl font-bold">
+                  {stats.pagesRead.toLocaleString()}
+                </p>
+                <p className="text-muted-foreground text-xs">Pages</p>
               </div>
               <div className="p-4 text-center">
-                <p className="text-2xl font-bold text-warning">{stats.avgRating}</p>
-                <p className="text-xs text-muted-foreground">Note moy.</p>
+                <p className="text-warning text-2xl font-bold">{stats.avgRating}</p>
+                <p className="text-muted-foreground text-xs">Note moy.</p>
               </div>
             </div>
           </CardContent>
@@ -263,13 +268,13 @@ export default function ProfilePage() {
       </motion.div>
 
       {/* Achievements */}
-      <motion.section variants={item} className="px-5 mb-6">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="font-semibold flex items-center gap-2">
-            <Award className="h-5 w-5 text-warning" />
+      <motion.section variants={item} className="mb-6 px-5">
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="flex items-center gap-2 font-semibold">
+            <Award className="text-warning h-5 w-5" />
             Badges
           </h2>
-          <span className="text-sm text-muted-foreground">
+          <span className="text-muted-foreground text-sm">
             {unlockedCount}/{achievements.length} débloqués
           </span>
         </div>
@@ -281,27 +286,28 @@ export default function ProfilePage() {
                 key={achievement.id}
                 whileTap={{ scale: 0.95 }}
                 className={cn(
-                  'relative p-4 rounded-2xl text-center transition-all',
-                  achievement.unlocked
-                    ? 'bg-card shadow-sm'
-                    : 'bg-muted/50 opacity-50'
+                  'relative rounded-2xl p-4 text-center transition-all',
+                  achievement.unlocked ? 'bg-card shadow-sm' : 'bg-muted/50 opacity-50'
                 )}
               >
-                <div className={cn(
-                  'w-12 h-12 rounded-full mx-auto mb-2 flex items-center justify-center',
-                  achievement.unlocked ? achievement.color : 'bg-muted'
-                )}>
-                  <Icon className={cn(
-                    'h-6 w-6',
-                    achievement.unlocked ? '' : 'text-muted-foreground'
-                  )} />
+                <div
+                  className={cn(
+                    'mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full',
+                    achievement.unlocked ? achievement.color : 'bg-muted'
+                  )}
+                >
+                  <Icon
+                    className={cn('h-6 w-6', achievement.unlocked ? '' : 'text-muted-foreground')}
+                  />
                 </div>
-                <p className="text-xs font-medium line-clamp-1">{achievement.name}</p>
-                {achievement.progress !== undefined && achievement.target && !achievement.unlocked && (
-                  <p className="text-[10px] text-muted-foreground mt-1">
-                    {achievement.progress}/{achievement.target}
-                  </p>
-                )}
+                <p className="line-clamp-1 text-xs font-medium">{achievement.name}</p>
+                {achievement.progress !== undefined &&
+                  achievement.target &&
+                  !achievement.unlocked && (
+                    <p className="text-muted-foreground mt-1 text-[10px]">
+                      {achievement.progress}/{achievement.target}
+                    </p>
+                  )}
               </motion.div>
             );
           })}
@@ -309,23 +315,23 @@ export default function ProfilePage() {
       </motion.section>
 
       {/* Actions */}
-      <motion.section variants={item} className="px-5 mb-6">
-        <h2 className="font-semibold mb-3">Actions rapides</h2>
+      <motion.section variants={item} className="mb-6 px-5">
+        <h2 className="mb-3 font-semibold">Actions rapides</h2>
         <div className="grid grid-cols-2 gap-3">
           <Button
             variant="outline"
             onClick={handleShare}
-            className="h-auto py-4 rounded-2xl flex-col gap-2"
+            className="h-auto flex-col gap-2 rounded-2xl py-4"
           >
-            <Share2 className="h-5 w-5 text-primary" />
+            <Share2 className="text-primary h-5 w-5" />
             <span className="text-sm">Partager</span>
           </Button>
           <Button
             variant="outline"
             onClick={handleExport}
-            className="h-auto py-4 rounded-2xl flex-col gap-2"
+            className="h-auto flex-col gap-2 rounded-2xl py-4"
           >
-            <Download className="h-5 w-5 text-success" />
+            <Download className="text-success h-5 w-5" />
             <span className="text-sm">Exporter</span>
           </Button>
         </div>
@@ -333,16 +339,16 @@ export default function ProfilePage() {
 
       {/* Settings */}
       <motion.section variants={item} className="px-5">
-        <h2 className="font-semibold mb-3">Paramètres</h2>
+        <h2 className="mb-3 font-semibold">Paramètres</h2>
         <Card className="card-ios">
-          <CardContent className="p-0 divide-y divide-border">
+          <CardContent className="divide-border divide-y p-0">
             {/* Dark Mode */}
             <div className="flex items-center justify-between p-4">
               <div className="flex items-center gap-3">
                 {darkMode ? (
-                  <Moon className="h-5 w-5 text-muted-foreground" />
+                  <Moon className="text-muted-foreground h-5 w-5" />
                 ) : (
-                  <Sun className="h-5 w-5 text-muted-foreground" />
+                  <Sun className="text-muted-foreground h-5 w-5" />
                 )}
                 <span>Mode sombre</span>
               </div>
@@ -352,7 +358,7 @@ export default function ProfilePage() {
             {/* Notifications */}
             <div className="flex items-center justify-between p-4">
               <div className="flex items-center gap-3">
-                <Bell className="h-5 w-5 text-muted-foreground" />
+                <Bell className="text-muted-foreground h-5 w-5" />
                 <span>Notifications</span>
               </div>
               <Switch checked={notifications} onCheckedChange={setNotifications} />
@@ -361,28 +367,28 @@ export default function ProfilePage() {
             <Separator />
 
             {/* Links */}
-            <button className="w-full flex items-center justify-between p-4 hover:bg-secondary/50 transition-colors">
+            <button className="hover:bg-secondary/50 flex w-full items-center justify-between p-4 transition-colors">
               <div className="flex items-center gap-3">
-                <Shield className="h-5 w-5 text-muted-foreground" />
+                <Shield className="text-muted-foreground h-5 w-5" />
                 <span>Confidentialité</span>
               </div>
-              <ChevronRight className="h-5 w-5 text-muted-foreground" />
+              <ChevronRight className="text-muted-foreground h-5 w-5" />
             </button>
 
-            <button className="w-full flex items-center justify-between p-4 hover:bg-secondary/50 transition-colors">
+            <button className="hover:bg-secondary/50 flex w-full items-center justify-between p-4 transition-colors">
               <div className="flex items-center gap-3">
-                <HelpCircle className="h-5 w-5 text-muted-foreground" />
+                <HelpCircle className="text-muted-foreground h-5 w-5" />
                 <span>Aide & Support</span>
               </div>
-              <ChevronRight className="h-5 w-5 text-muted-foreground" />
+              <ChevronRight className="text-muted-foreground h-5 w-5" />
             </button>
 
-            <button className="w-full flex items-center justify-between p-4 hover:bg-secondary/50 transition-colors">
+            <button className="hover:bg-secondary/50 flex w-full items-center justify-between p-4 transition-colors">
               <div className="flex items-center gap-3">
-                <MessageSquare className="h-5 w-5 text-muted-foreground" />
+                <MessageSquare className="text-muted-foreground h-5 w-5" />
                 <span>Nous contacter</span>
               </div>
-              <ChevronRight className="h-5 w-5 text-muted-foreground" />
+              <ChevronRight className="text-muted-foreground h-5 w-5" />
             </button>
           </CardContent>
         </Card>
@@ -391,14 +397,14 @@ export default function ProfilePage() {
         <Button
           variant="destructive"
           onClick={handleLogout}
-          className="w-full mt-4 h-12 rounded-2xl"
+          className="mt-4 h-12 w-full rounded-2xl"
         >
-          <LogOut className="h-5 w-5 mr-2" />
+          <LogOut className="mr-2 h-5 w-5" />
           Déconnexion
         </Button>
 
         {/* Version */}
-        <p className="text-center text-xs text-muted-foreground mt-6">
+        <p className="text-muted-foreground mt-6 text-center text-xs">
           BookShelf v2.0.0 • Made with ❤️
         </p>
       </motion.section>
@@ -408,7 +414,7 @@ export default function ProfilePage() {
 
 function ProfileSkeleton() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background min-h-screen">
       <header className="px-5 pt-4 pb-6">
         <div className="flex items-center gap-4">
           <Skeleton className="h-20 w-20 rounded-full" />
@@ -418,10 +424,10 @@ function ProfileSkeleton() {
           </div>
         </div>
       </header>
-      <div className="px-5 space-y-6">
+      <div className="space-y-6 px-5">
         <Skeleton className="h-24 w-full rounded-2xl" />
         <div>
-          <Skeleton className="h-5 w-20 mb-3" />
+          <Skeleton className="mb-3 h-5 w-20" />
           <div className="grid grid-cols-3 gap-3">
             {[...Array(6)].map((_, i) => (
               <Skeleton key={i} className="h-24 rounded-2xl" />

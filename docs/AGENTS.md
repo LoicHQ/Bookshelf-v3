@@ -13,12 +13,14 @@ Les agents sont activés automatiquement selon les fichiers que vous modifiez (v
 **Quand l'utiliser** : Lorsque vous travaillez sur des fichiers de test ou la configuration de tests.
 
 **Fichiers concernés** :
+
 - `**/tests/**`
 - `**/*.test.ts`, `**/*.test.tsx`
 - `**/*.spec.ts`, `**/*.spec.tsx`
 - `**/vitest.config.ts`
 
 **Exemple d'annotation** :
+
 ```typescript
 /**
  * @agent tests
@@ -38,6 +40,7 @@ describe('BookService', () => {
 **Quand l'utiliser** : Lorsque vous travaillez sur les composants React, le styling, ou l'intégration Figma.
 
 **Fichiers concernés** :
+
 - `**/src/components/**`
 - `**/src/app/**/*.tsx`
 - `**/src/app/**/*.css`
@@ -46,6 +49,7 @@ describe('BookService', () => {
 - `**/components.json`
 
 **Exemple d'annotation** :
+
 ```typescript
 /**
  * @agent frontend-ux-ui
@@ -65,6 +69,7 @@ export function BookCard() {
 **Quand l'utiliser** : Lorsque vous rédigez ou modifiez de la documentation.
 
 **Fichiers concernés** :
+
 - `**/*.md`
 - `**/README*`
 - `**/CHANGELOG*`
@@ -83,6 +88,7 @@ export function BookCard() {
 **Quand l'utiliser** : Lorsque vous configurez CI/CD, déploiement, ou variables d'environnement.
 
 **Fichiers concernés** :
+
 - `**/.github/**`
 - `**/workflows/**`
 - `**/*.yml`, `**/*.yaml`
@@ -93,6 +99,7 @@ export function BookCard() {
 - `**/next.config.ts`
 
 **Exemple d'annotation** :
+
 ```yaml
 # @agent devops-ci
 # Configuration CI/CD pour GitHub Actions
@@ -108,6 +115,7 @@ name: CI
 **Quand l'utiliser** : Lorsque vous modifiez le schéma Prisma, les migrations, ou les requêtes.
 
 **Fichiers concernés** :
+
 - `**/prisma/**`
 - `**/*.prisma`
 - `**/migrations/**`
@@ -116,6 +124,7 @@ name: CI
 - `**/prisma.config.ts`
 
 **Exemple d'annotation** :
+
 ```prisma
 // @agent database
 // Schéma Prisma pour la gestion des livres
@@ -133,6 +142,7 @@ model Book {
 **Quand l'utiliser** : Pour explorer de nouvelles idées, fonctionnalités, ou user stories.
 
 **Fichiers concernés** :
+
 - `**/docs/**`
 - `**/ideas/**`
 - `**/*.md`
@@ -147,12 +157,14 @@ model Book {
 **Quand l'utiliser** : Lorsque vous travaillez sur les API routes, services, ou hooks personnalisés.
 
 **Fichiers concernés** :
+
 - `**/src/app/api/**`
 - `**/src/lib/**`
 - `**/src/services/**`
 - `**/src/hooks/**`
 
 **Exemple d'annotation** :
+
 ```typescript
 /**
  * @agent backend-logic

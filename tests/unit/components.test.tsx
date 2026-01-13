@@ -156,7 +156,7 @@ describe('Components', () => {
     it('should handle click when onClick is provided', () => {
       const mockOnClick = vi.fn();
       const { container } = render(<BookCard book={mockBook} onClick={mockOnClick} />);
-      
+
       const card = container.querySelector('[class*="cursor-pointer"]');
       expect(card).toBeTruthy();
       if (card) {

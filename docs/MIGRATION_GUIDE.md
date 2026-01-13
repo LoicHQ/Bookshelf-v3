@@ -53,6 +53,7 @@ npm run db:migrate
 ```
 
 Nommez votre migration de manière descriptive :
+
 - `add_user_avatar`
 - `create_book_categories`
 - `add_reading_stats`
@@ -96,6 +97,7 @@ npx prisma migrate deploy
 ```
 
 Cette commande :
+
 - Applique uniquement les migrations non appliquées
 - Ne crée pas de nouvelles migrations
 - Est sûre pour la production

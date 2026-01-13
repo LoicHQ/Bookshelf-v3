@@ -35,6 +35,16 @@ export interface UserBook {
   createdAt: Date;
   updatedAt: Date;
   book?: Book;
+  userBookImages?: UserBookImage[];
+}
+
+export interface UserBookImage {
+  id: string;
+  userBookId: string;
+  imageUrl: string;
+  source: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export type NoteType = 'NOTE' | 'QUOTE' | 'HIGHLIGHT';
@@ -120,9 +130,9 @@ export interface OpenLibraryBook {
   authors?: Array<{ name: string }>;
   description?: string | { value: string };
   publish_date?: string;
-  publishers?: string[];
+  publishers?: Array<string | { name: string }>;
   number_of_pages?: number;
-  subjects?: string[];
+  subjects?: Array<string | { name?: string; value?: string }>;
   covers?: number[];
   isbn_10?: string[];
   isbn_13?: string[];

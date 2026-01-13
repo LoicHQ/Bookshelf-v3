@@ -5,15 +5,15 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { 
-  BookOpen, 
-  Target, 
-  TrendingUp, 
-  Clock, 
+import {
+  BookOpen,
+  Target,
+  TrendingUp,
+  Clock,
   ChevronRight,
   Sparkles,
   Calendar,
-  BookMarked
+  BookMarked,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -47,14 +47,14 @@ const container = {
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1
-    }
-  }
+      staggerChildren: 0.1,
+    },
+  },
 };
 
 const item = {
   hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0 }
+  show: { opacity: 1, y: 0 },
 };
 
 export default function DashboardPage() {
@@ -72,11 +72,13 @@ export default function DashboardPage() {
       if (response.ok) {
         const result = await response.json();
         const books: UserBook[] = result.books || [];
-        
+
         const currentYear = new Date().getFullYear();
         const booksThisYear = books.filter(
-          (b: UserBook) => b.status === 'COMPLETED' && 
-          b.endDate && new Date(b.endDate).getFullYear() === currentYear
+          (b: UserBook) =>
+            b.status === 'COMPLETED' &&
+            b.endDate &&
+            new Date(b.endDate).getFullYear() === currentYear
         ).length;
 
         setData({
@@ -90,7 +92,10 @@ export default function DashboardPage() {
           stats: {
             totalBooks: books.length,
             booksThisYear,
-            pagesRead: books.reduce((acc: number, b: UserBook) => acc + (b.book?.pageCount || 0), 0),
+            pagesRead: books.reduce(
+              (acc: number, b: UserBook) => acc + (b.book?.pageCount || 0),
+              0
+            ),
             readingStreak: 0,
           },
           goal: {
@@ -127,23 +132,20 @@ export default function DashboardPage() {
 
   return (
     <motion.div
-      className="min-h-screen bg-background"
+      className="bg-background min-h-screen"
       variants={container}
       initial="hidden"
       animate="show"
     >
       {/* Header */}
-      <motion.header 
-        variants={item}
-        className="px-5 pt-safe-area-top pt-4 pb-2"
-      >
+      <motion.header variants={item} className="pt-safe-area-top px-5 pt-4 pb-2">
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
             <p className="text-muted-foreground text-sm">{getGreeting()}</p>
             <h1 className="title-large">{data.user.name || 'Lecteur'}</h1>
           </div>
           <Link href="/profile">
-            <Avatar className="h-12 w-12 ring-2 ring-primary/20">
+            <Avatar className="ring-primary/20 h-12 w-12 ring-2">
               <AvatarImage src={data.user.image || undefined} />
               <AvatarFallback className="bg-primary/10 text-primary font-semibold">
                 {(data.user.name || 'U')[0].toUpperCase()}
@@ -153,31 +155,32 @@ export default function DashboardPage() {
         </div>
       </motion.header>
 
-      <div className="px-5 space-y-6 pb-6">
+      <div className="space-y-6 px-5 pb-6">
         {/* Reading Goal Card */}
         {data.goal && (
           <motion.div variants={item}>
-            <Card className="card-ios overflow-hidden bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border-0">
+            <Card className="card-ios from-primary/10 via-primary/5 overflow-hidden border-0 bg-gradient-to-br to-transparent">
               <CardContent className="p-5">
-                <div className="flex items-start justify-between mb-4">
+                <div className="mb-4 flex items-start justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                      <Target className="h-5 w-5 text-primary" />
+                    <div className="bg-primary/20 flex h-10 w-10 items-center justify-center rounded-full">
+                      <Target className="text-primary h-5 w-5" />
                     </div>
                     <div>
                       <h3 className="font-semibold">Objectif {new Date().getFullYear()}</h3>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-muted-foreground text-sm">
                         {data.goal.current} / {data.goal.target} livres
                       </p>
                     </div>
                   </div>
-                  <span className="text-2xl font-bold text-primary">
+                  <span className="text-primary text-2xl font-bold">
                     {Math.round(goalProgress)}%
                   </span>
                 </div>
                 <Progress value={goalProgress} className="h-2" />
-                <p className="text-xs text-muted-foreground mt-2">
-                  Plus que {data.goal.target - data.goal.current} livres pour atteindre votre objectif !
+                <p className="text-muted-foreground mt-2 text-xs">
+                  Plus que {data.goal.target - data.goal.current} livres pour atteindre votre
+                  objectif !
                 </p>
               </CardContent>
             </Card>
@@ -186,20 +189,17 @@ export default function DashboardPage() {
 
         {/* Currently Reading */}
         <motion.section variants={item}>
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-lg font-semibold flex items-center gap-2">
-              <BookOpen className="h-5 w-5 text-warning" />
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="flex items-center gap-2 text-lg font-semibold">
+              <BookOpen className="text-warning h-5 w-5" />
               En cours de lecture
             </h2>
-            <Link 
-              href="/library?filter=READING" 
-              className="text-sm text-primary flex items-center"
-            >
+            <Link href="/library?filter=READING" className="text-primary flex items-center text-sm">
               Tout voir
               <ChevronRight className="h-4 w-4" />
             </Link>
           </div>
-          
+
           {data.currentlyReading.length > 0 ? (
             <div className="space-y-3">
               {data.currentlyReading.map((userBook, index) => (
@@ -212,7 +212,7 @@ export default function DashboardPage() {
                     <Card className="card-ios haptic-light">
                       <CardContent className="p-4">
                         <div className="flex gap-4">
-                          <div className="relative h-24 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-muted">
+                          <div className="bg-muted relative h-24 w-16 flex-shrink-0 overflow-hidden rounded-lg">
                             {userBook.book?.coverImage || userBook.book?.thumbnail ? (
                               <Image
                                 src={userBook.book.coverImage || userBook.book.thumbnail || ''}
@@ -223,25 +223,28 @@ export default function DashboardPage() {
                               />
                             ) : (
                               <div className="flex h-full w-full items-center justify-center">
-                                <BookMarked className="h-6 w-6 text-muted-foreground" />
+                                <BookMarked className="text-muted-foreground h-6 w-6" />
                               </div>
                             )}
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <h3 className="font-semibold line-clamp-1">
-                              {userBook.book?.title}
-                            </h3>
-                            <p className="text-sm text-muted-foreground line-clamp-1">
+                          <div className="min-w-0 flex-1">
+                            <h3 className="line-clamp-1 font-semibold">{userBook.book?.title}</h3>
+                            <p className="text-muted-foreground line-clamp-1 text-sm">
                               {userBook.book?.authors?.join(', ')}
                             </p>
                             {userBook.currentPage && userBook.book?.pageCount && (
                               <div className="mt-2">
-                                <div className="flex justify-between text-xs text-muted-foreground mb-1">
+                                <div className="text-muted-foreground mb-1 flex justify-between text-xs">
                                   <span>Page {userBook.currentPage}</span>
-                                  <span>{Math.round((userBook.currentPage / userBook.book.pageCount) * 100)}%</span>
+                                  <span>
+                                    {Math.round(
+                                      (userBook.currentPage / userBook.book.pageCount) * 100
+                                    )}
+                                    %
+                                  </span>
                                 </div>
-                                <Progress 
-                                  value={(userBook.currentPage / userBook.book.pageCount) * 100} 
+                                <Progress
+                                  value={(userBook.currentPage / userBook.book.pageCount) * 100}
                                   className="h-1.5"
                                 />
                               </div>
@@ -257,12 +260,9 @@ export default function DashboardPage() {
           ) : (
             <Card className="card-ios">
               <CardContent className="py-8 text-center">
-                <BookOpen className="h-12 w-12 mx-auto text-muted-foreground/50 mb-3" />
+                <BookOpen className="text-muted-foreground/50 mx-auto mb-3 h-12 w-12" />
                 <p className="text-muted-foreground">Aucun livre en cours</p>
-                <Link 
-                  href="/library" 
-                  className="text-sm text-primary mt-2 inline-block"
-                >
+                <Link href="/library" className="text-primary mt-2 inline-block text-sm">
                   Commencer à lire
                 </Link>
               </CardContent>
@@ -272,41 +272,35 @@ export default function DashboardPage() {
 
         {/* Quick Stats */}
         <motion.section variants={item}>
-          <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-success" />
+          <h2 className="mb-3 flex items-center gap-2 text-lg font-semibold">
+            <TrendingUp className="text-success h-5 w-5" />
             Statistiques
           </h2>
           <div className="grid grid-cols-2 gap-3">
             <Card className="card-ios">
               <CardContent className="p-4 text-center">
-                <div className="text-3xl font-bold text-primary">
-                  {data.stats.totalBooks}
-                </div>
-                <p className="text-sm text-muted-foreground">Livres total</p>
+                <div className="text-primary text-3xl font-bold">{data.stats.totalBooks}</div>
+                <p className="text-muted-foreground text-sm">Livres total</p>
               </CardContent>
             </Card>
             <Card className="card-ios">
               <CardContent className="p-4 text-center">
-                <div className="text-3xl font-bold text-success">
-                  {data.stats.booksThisYear}
-                </div>
-                <p className="text-sm text-muted-foreground">Cette année</p>
+                <div className="text-success text-3xl font-bold">{data.stats.booksThisYear}</div>
+                <p className="text-muted-foreground text-sm">Cette année</p>
               </CardContent>
             </Card>
             <Card className="card-ios">
               <CardContent className="p-4 text-center">
-                <div className="text-3xl font-bold text-warning">
+                <div className="text-warning text-3xl font-bold">
                   {data.stats.pagesRead.toLocaleString()}
                 </div>
-                <p className="text-sm text-muted-foreground">Pages lues</p>
+                <p className="text-muted-foreground text-sm">Pages lues</p>
               </CardContent>
             </Card>
             <Card className="card-ios">
               <CardContent className="p-4 text-center">
-                <div className="text-3xl font-bold text-info">
-                  {data.stats.readingStreak}
-                </div>
-                <p className="text-sm text-muted-foreground">Jours consécutifs</p>
+                <div className="text-info text-3xl font-bold">{data.stats.readingStreak}</div>
+                <p className="text-muted-foreground text-sm">Jours consécutifs</p>
               </CardContent>
             </Card>
           </div>
@@ -314,30 +308,27 @@ export default function DashboardPage() {
 
         {/* Recently Added */}
         <motion.section variants={item}>
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-lg font-semibold flex items-center gap-2">
-              <Clock className="h-5 w-5 text-muted-foreground" />
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="flex items-center gap-2 text-lg font-semibold">
+              <Clock className="text-muted-foreground h-5 w-5" />
               Ajoutés récemment
             </h2>
-            <Link 
-              href="/library" 
-              className="text-sm text-primary flex items-center"
-            >
+            <Link href="/library" className="text-primary flex items-center text-sm">
               Tout voir
               <ChevronRight className="h-4 w-4" />
             </Link>
           </div>
-          
-          <div className="flex gap-3 overflow-x-auto pb-2 -mx-5 px-5 scrollbar-hide">
+
+          <div className="scrollbar-hide -mx-5 flex gap-3 overflow-x-auto px-5 pb-2">
             {data.recentlyAdded.map((userBook, index) => (
               <Link key={userBook.id} href={`/book/${userBook.id}`}>
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: index * 0.05 }}
-                  className="flex-shrink-0 w-28"
+                  className="w-28 flex-shrink-0"
                 >
-                  <div className="relative h-40 w-28 overflow-hidden rounded-xl bg-muted shadow-md">
+                  <div className="bg-muted relative h-40 w-28 overflow-hidden rounded-xl shadow-md">
                     {userBook.book?.coverImage || userBook.book?.thumbnail ? (
                       <Image
                         src={userBook.book.coverImage || userBook.book.thumbnail || ''}
@@ -348,25 +339,20 @@ export default function DashboardPage() {
                       />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center">
-                        <BookMarked className="h-8 w-8 text-muted-foreground" />
+                        <BookMarked className="text-muted-foreground h-8 w-8" />
                       </div>
                     )}
                   </div>
-                  <p className="text-xs font-medium mt-2 line-clamp-2">
-                    {userBook.book?.title}
-                  </p>
+                  <p className="mt-2 line-clamp-2 text-xs font-medium">{userBook.book?.title}</p>
                 </motion.div>
               </Link>
             ))}
             {data.recentlyAdded.length === 0 && (
               <Card className="card-ios w-full">
                 <CardContent className="py-8 text-center">
-                  <Sparkles className="h-12 w-12 mx-auto text-muted-foreground/50 mb-3" />
+                  <Sparkles className="text-muted-foreground/50 mx-auto mb-3 h-12 w-12" />
                   <p className="text-muted-foreground">Aucun livre ajouté</p>
-                  <Link 
-                    href="/scanner" 
-                    className="text-sm text-primary mt-2 inline-block"
-                  >
+                  <Link href="/scanner" className="text-primary mt-2 inline-block text-sm">
                     Scanner un livre
                   </Link>
                 </CardContent>
@@ -377,26 +363,26 @@ export default function DashboardPage() {
 
         {/* Quick Actions */}
         <motion.section variants={item}>
-          <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-primary" />
+          <h2 className="mb-3 flex items-center gap-2 text-lg font-semibold">
+            <Sparkles className="text-primary h-5 w-5" />
             Actions rapides
           </h2>
           <div className="grid grid-cols-2 gap-3">
             <Link href="/scanner">
-              <Card className="card-ios haptic-light hover:shadow-md transition-shadow">
-                <CardContent className="p-4 flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                    <BookOpen className="h-5 w-5 text-primary" />
+              <Card className="card-ios haptic-light transition-shadow hover:shadow-md">
+                <CardContent className="flex items-center gap-3 p-4">
+                  <div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-full">
+                    <BookOpen className="text-primary h-5 w-5" />
                   </div>
                   <span className="font-medium">Scanner un livre</span>
                 </CardContent>
               </Card>
             </Link>
             <Link href="/library?tab=wishlist">
-              <Card className="card-ios haptic-light hover:shadow-md transition-shadow">
-                <CardContent className="p-4 flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-warning/10 flex items-center justify-center">
-                    <Calendar className="h-5 w-5 text-warning" />
+              <Card className="card-ios haptic-light transition-shadow hover:shadow-md">
+                <CardContent className="flex items-center gap-3 p-4">
+                  <div className="bg-warning/10 flex h-10 w-10 items-center justify-center rounded-full">
+                    <Calendar className="text-warning h-5 w-5" />
                   </div>
                   <span className="font-medium">Ma wishlist</span>
                 </CardContent>
@@ -411,7 +397,7 @@ export default function DashboardPage() {
 
 function DashboardSkeleton() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background min-h-screen">
       <header className="px-5 pt-4 pb-2">
         <div className="flex items-center justify-between">
           <div className="space-y-2">
@@ -421,7 +407,7 @@ function DashboardSkeleton() {
           <Skeleton className="h-12 w-12 rounded-full" />
         </div>
       </header>
-      <div className="px-5 space-y-6">
+      <div className="space-y-6 px-5">
         <Skeleton className="h-32 w-full rounded-2xl" />
         <div className="space-y-3">
           <Skeleton className="h-6 w-40" />

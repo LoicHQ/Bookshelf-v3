@@ -15,7 +15,11 @@ interface LogoutButtonProps {
   showIcon?: boolean;
 }
 
-export function LogoutButton({ variant = 'outline', className, showIcon = true }: LogoutButtonProps) {
+export function LogoutButton({
+  variant = 'outline',
+  className,
+  showIcon = true,
+}: LogoutButtonProps) {
   const router = useRouter();
 
   const handleLogout = async () => {

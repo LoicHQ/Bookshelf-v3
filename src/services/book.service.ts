@@ -43,6 +43,18 @@ export class BookService {
               categories: true,
             },
           },
+          userBookImages: {
+            select: {
+              id: true,
+              imageUrl: true,
+              source: true,
+              createdAt: true,
+            },
+            orderBy: {
+              createdAt: 'desc',
+            },
+            take: 3,
+          },
         },
         orderBy: { updatedAt: 'desc' },
         take: query.limit,
@@ -76,6 +88,27 @@ export class BookService {
         });
       }
 
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/6333b291-2b13-42e9-8b1c-448e178a5664', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          location: 'book.service.ts:79',
+          message: 'addBookToLibrary before create/update',
+          data: {
+            bookExists: !!book,
+            bookCoverImage: book?.coverImage,
+            inputCoverImage: input.coverImage,
+            inputThumbnail: input.thumbnail,
+            isbn: input.isbn,
+          },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'run1',
+          hypothesisId: 'C',
+        }),
+      }).catch(() => {});
+      // #endregion
       // Si le livre n'existe pas, le créer
       if (!book) {
         book = await tx.book.create({
@@ -95,7 +128,83 @@ export class BookService {
             language: input.language || null,
           },
         });
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/6333b291-2b13-42e9-8b1c-448e178a5664', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            location: 'book.service.ts:97',
+            message: 'Book created',
+            data: { bookId: book.id, coverImage: book.coverImage, thumbnail: book.thumbnail },
+            timestamp: Date.now(),
+            sessionId: 'debug-session',
+            runId: 'run1',
+            hypothesisId: 'C',
+          }),
+        }).catch(() => {});
+        // #endregion
+      } else {
+        // Mettre à jour le livre existant si de nouvelles données sont fournies
+        const updateData: any = {};
+        if (input.coverImage !== undefined) updateData.coverImage = input.coverImage || null;
+        if (input.thumbnail !== undefined) updateData.thumbnail = input.thumbnail || null;
+        if (input.description !== undefined && !book.description)
+          updateData.description = input.description || null;
+        if (input.publishedDate !== undefined && !book.publishedDate)
+          updateData.publishedDate = input.publishedDate || null;
+        if (input.publisher !== undefined && !book.publisher)
+          updateData.publisher = input.publisher || null;
+        if (input.pageCount !== undefined && !book.pageCount)
+          updateData.pageCount = input.pageCount || null;
+
+        const needsUpdate = Object.keys(updateData).length > 0;
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/6333b291-2b13-42e9-8b1c-448e178a5664', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            location: 'book.service.ts:108',
+            message: 'Book exists, checking update',
+            data: {
+              needsUpdate,
+              updateData,
+              bookCoverImage: book.coverImage,
+              inputCoverImage: input.coverImage,
+            },
+            timestamp: Date.now(),
+            sessionId: 'debug-session',
+            runId: 'run1',
+            hypothesisId: 'C',
+          }),
+        }).catch(() => {});
+        // #endregion
+        if (needsUpdate) {
+          book = await tx.book.update({
+            where: { id: book.id },
+            data: updateData,
+          });
+          // #region agent log
+          fetch('http://127.0.0.1:7242/ingest/6333b291-2b13-42e9-8b1c-448e178a5664', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              location: 'book.service.ts:119',
+              message: 'Book updated',
+              data: { bookId: book.id, coverImage: book.coverImage, thumbnail: book.thumbnail },
+              timestamp: Date.now(),
+              sessionId: 'debug-session',
+              runId: 'run1',
+              hypothesisId: 'C',
+            }),
+          }).catch(() => {});
+          // #endregion
+        }
       }
+
+      // Recharger le livre pour s'assurer d'avoir les dernières données
+      book = await tx.book.findUnique({
+        where: { id: book.id },
+      });
 
       // Vérifier si l'utilisateur a déjà ce livre
       const existingUserBook = await tx.userBook.findUnique({
@@ -105,10 +214,37 @@ export class BookService {
             bookId: book.id,
           },
         },
+        include: {
+          book: {
+            select: {
+              id: true,
+              title: true,
+              author: true,
+              authors: true,
+              coverImage: true,
+              thumbnail: true,
+              isbn: true,
+              isbn13: true,
+            },
+          },
+          userBookImages: {
+            select: {
+              id: true,
+              imageUrl: true,
+              source: true,
+              createdAt: true,
+            },
+            orderBy: {
+              createdAt: 'desc',
+            },
+            take: 3,
+          },
+        },
       });
 
       if (existingUserBook) {
-        throw new ConflictError('Ce livre est déjà dans votre bibliothèque');
+        // Le livre a été mis à jour, retourner le UserBook existant avec les nouvelles données
+        return existingUserBook;
       }
 
       // Ajouter le livre à la bibliothèque de l'utilisateur
@@ -131,6 +267,18 @@ export class BookService {
               isbn13: true,
             },
           },
+          userBookImages: {
+            select: {
+              id: true,
+              imageUrl: true,
+              source: true,
+              createdAt: true,
+            },
+            orderBy: {
+              createdAt: 'desc',
+            },
+            take: 3,
+          },
         },
       });
 
@@ -139,13 +287,59 @@ export class BookService {
   }
 
   /**
+   * Récupère un livre utilisateur par son ID
+   */
+  static async getUserBookById(userId: string, userBookId: string) {
+    const userBook = await prisma.userBook.findFirst({
+      where: {
+        id: userBookId,
+        userId,
+      },
+      include: {
+        book: {
+          select: {
+            id: true,
+            title: true,
+            author: true,
+            authors: true,
+            coverImage: true,
+            thumbnail: true,
+            isbn: true,
+            isbn13: true,
+            publishedDate: true,
+            pageCount: true,
+            categories: true,
+            description: true,
+            publisher: true,
+            language: true,
+          },
+        },
+        userBookImages: {
+          select: {
+            id: true,
+            imageUrl: true,
+            source: true,
+            createdAt: true,
+          },
+          orderBy: {
+            createdAt: 'desc',
+          },
+          take: 3,
+        },
+      },
+    });
+
+    if (!userBook) {
+      throw new NotFoundError('Livre utilisateur');
+    }
+
+    return userBook;
+  }
+
+  /**
    * Met à jour le statut d'un livre utilisateur
    */
-  static async updateBookStatus(
-    userId: string,
-    userBookId: string,
-    status: BookStatus
-  ) {
+  static async updateBookStatus(userId: string, userBookId: string, status: BookStatus) {
     const userBook = await prisma.userBook.findFirst({
       where: {
         id: userBookId,
@@ -170,6 +364,82 @@ export class BookService {
             coverImage: true,
             thumbnail: true,
           },
+        },
+        userBookImages: {
+          select: {
+            id: true,
+            imageUrl: true,
+            source: true,
+            createdAt: true,
+          },
+          orderBy: {
+            createdAt: 'desc',
+          },
+          take: 3,
+        },
+      },
+    });
+  }
+
+  /**
+   * Met à jour un livre utilisateur (statut, rating, favorite, currentPage, etc.)
+   */
+  static async updateUserBook(
+    userId: string,
+    userBookId: string,
+    data: {
+      status?: BookStatus;
+      rating?: number | null;
+      favorite?: boolean;
+      currentPage?: number | null;
+      notes?: string | null;
+      review?: string | null;
+    }
+  ) {
+    const userBook = await prisma.userBook.findFirst({
+      where: {
+        id: userBookId,
+        userId,
+      },
+    });
+
+    if (!userBook) {
+      throw new NotFoundError('Livre utilisateur');
+    }
+
+    return prisma.userBook.update({
+      where: { id: userBookId },
+      data,
+      include: {
+        book: {
+          select: {
+            id: true,
+            title: true,
+            author: true,
+            authors: true,
+            coverImage: true,
+            thumbnail: true,
+            isbn: true,
+            isbn13: true,
+            publishedDate: true,
+            pageCount: true,
+            categories: true,
+            description: true,
+            publisher: true,
+            language: true,
+          },
+        },
+        userBookImages: {
+          select: {
+            id: true,
+            imageUrl: true,
+            source: true,
+            createdAt: true,
+          },
+          orderBy: {
+            createdAt: 'desc',
+          },
+          take: 3,
         },
       },
     });

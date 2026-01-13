@@ -32,20 +32,33 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import type { UserBook } from '@/types';
 
-const MONTHS = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
+const MONTHS = [
+  'Jan',
+  'Fév',
+  'Mar',
+  'Avr',
+  'Mai',
+  'Juin',
+  'Juil',
+  'Août',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Déc',
+];
 const CHART_COLORS = ['#007aff', '#34c759', '#ff9500', '#af52de', '#ff2d55', '#5ac8fa'];
 
 const container = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
-    transition: { staggerChildren: 0.1 }
-  }
+    transition: { staggerChildren: 0.1 },
+  },
 };
 
 const item = {
   hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0 }
+  show: { opacity: 1, y: 0 },
 };
 
 export default function StatsPage() {
@@ -75,11 +88,11 @@ export default function StatsPage() {
   };
 
   const stats = useMemo(() => {
-    const completedBooks = books.filter(b => b.status === 'COMPLETED' && !b.isWishlist);
-    const readingBooks = books.filter(b => b.status === 'READING' && !b.isWishlist);
-    const allBooks = books.filter(b => !b.isWishlist);
+    const completedBooks = books.filter((b) => b.status === 'COMPLETED' && !b.isWishlist);
+    const readingBooks = books.filter((b) => b.status === 'READING' && !b.isWishlist);
+    const allBooks = books.filter((b) => !b.isWishlist);
 
-    const booksThisYear = completedBooks.filter(b => {
+    const booksThisYear = completedBooks.filter((b) => {
       const endDate = b.endDate ? new Date(b.endDate) : null;
       return endDate && endDate.getFullYear() === selectedYear;
     });
@@ -89,7 +102,7 @@ export default function StatsPage() {
 
     // Monthly data
     const monthlyData = MONTHS.map((month, index) => {
-      const count = booksThisYear.filter(b => {
+      const count = booksThisYear.filter((b) => {
         const endDate = b.endDate ? new Date(b.endDate) : null;
         return endDate && endDate.getMonth() === index;
       }).length;
@@ -98,8 +111,8 @@ export default function StatsPage() {
 
     // Category distribution
     const categoryCount: Record<string, number> = {};
-    completedBooks.forEach(b => {
-      b.book?.categories?.forEach(cat => {
+    completedBooks.forEach((b) => {
+      b.book?.categories?.forEach((cat) => {
         categoryCount[cat] = (categoryCount[cat] || 0) + 1;
       });
     });
@@ -109,15 +122,13 @@ export default function StatsPage() {
       .map(([name, value]) => ({ name, value }));
 
     // Rating distribution
-    const ratingData = [1, 2, 3, 4, 5].map(rating => ({
+    const ratingData = [1, 2, 3, 4, 5].map((rating) => ({
       rating: `${rating}★`,
-      count: completedBooks.filter(b => b.rating === rating).length,
+      count: completedBooks.filter((b) => b.rating === rating).length,
     }));
 
     // Average reading time (estimated)
-    const avgPagesPerBook = completedBooks.length > 0
-      ? pagesRead / completedBooks.length
-      : 0;
+    const avgPagesPerBook = completedBooks.length > 0 ? pagesRead / completedBooks.length : 0;
 
     return {
       totalBooks: allBooks.length,
@@ -142,7 +153,7 @@ export default function StatsPage() {
 
   return (
     <motion.div
-      className="min-h-screen bg-background pb-24"
+      className="bg-background min-h-screen pb-24"
       variants={container}
       initial="hidden"
       animate="show"
@@ -153,15 +164,18 @@ export default function StatsPage() {
         <p className="text-muted-foreground">Vos habitudes de lecture</p>
       </header>
 
-      <div className="px-5 space-y-6">
+      <div className="space-y-6 px-5">
         {/* Year Selector */}
-        <motion.div variants={item} className="flex gap-2 overflow-x-auto pb-2 -mx-5 px-5 scrollbar-hide">
-          {[selectedYear - 1, selectedYear, selectedYear + 1].map(year => (
+        <motion.div
+          variants={item}
+          className="scrollbar-hide -mx-5 flex gap-2 overflow-x-auto px-5 pb-2"
+        >
+          {[selectedYear - 1, selectedYear, selectedYear + 1].map((year) => (
             <button
               key={year}
               onClick={() => setSelectedYear(year)}
               className={cn(
-                'px-4 py-2 rounded-full text-sm font-medium transition-all',
+                'rounded-full px-4 py-2 text-sm font-medium transition-all',
                 year === selectedYear
                   ? 'bg-primary text-primary-foreground'
                   : 'bg-secondary text-muted-foreground'
@@ -174,32 +188,31 @@ export default function StatsPage() {
 
         {/* Goal Progress */}
         <motion.div variants={item}>
-          <Card className="card-ios overflow-hidden bg-gradient-to-br from-primary/10 to-transparent border-0">
+          <Card className="card-ios from-primary/10 overflow-hidden border-0 bg-gradient-to-br to-transparent">
             <CardContent className="p-5">
-              <div className="flex items-center justify-between mb-4">
+              <div className="mb-4 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
-                    <Target className="h-6 w-6 text-primary" />
+                  <div className="bg-primary/20 flex h-12 w-12 items-center justify-center rounded-full">
+                    <Target className="text-primary h-6 w-6" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-lg">Objectif {selectedYear}</h3>
-                    <p className="text-sm text-muted-foreground">
+                    <h3 className="text-lg font-semibold">Objectif {selectedYear}</h3>
+                    <p className="text-muted-foreground text-sm">
                       {stats.goal.current} / {stats.goal.target} livres
                     </p>
                   </div>
                 </div>
-                <span className="text-3xl font-bold text-primary">
-                  {Math.round(goalProgress)}%
-                </span>
+                <span className="text-primary text-3xl font-bold">{Math.round(goalProgress)}%</span>
               </div>
               <Progress value={Math.min(goalProgress, 100)} className="h-3" />
               {stats.goal.current < stats.goal.target && (
-                <p className="text-xs text-muted-foreground mt-3">
-                  Encore {stats.goal.target - stats.goal.current} livres pour atteindre votre objectif !
+                <p className="text-muted-foreground mt-3 text-xs">
+                  Encore {stats.goal.target - stats.goal.current} livres pour atteindre votre
+                  objectif !
                 </p>
               )}
               {stats.goal.current >= stats.goal.target && (
-                <p className="text-xs text-success mt-3 flex items-center gap-1">
+                <p className="text-success mt-3 flex items-center gap-1 text-xs">
                   <Award className="h-3 w-3" /> Objectif atteint ! Félicitations !
                 </p>
               )}
@@ -211,36 +224,36 @@ export default function StatsPage() {
         <motion.div variants={item} className="grid grid-cols-2 gap-3">
           <Card className="card-ios">
             <CardContent className="p-4">
-              <div className="flex items-center gap-3 mb-2">
-                <BookCheck className="h-5 w-5 text-success" />
-                <span className="text-sm text-muted-foreground">Livres lus</span>
+              <div className="mb-2 flex items-center gap-3">
+                <BookCheck className="text-success h-5 w-5" />
+                <span className="text-muted-foreground text-sm">Livres lus</span>
               </div>
               <p className="text-3xl font-bold">{stats.completedBooks}</p>
             </CardContent>
           </Card>
           <Card className="card-ios">
             <CardContent className="p-4">
-              <div className="flex items-center gap-3 mb-2">
-                <BookOpen className="h-5 w-5 text-warning" />
-                <span className="text-sm text-muted-foreground">En cours</span>
+              <div className="mb-2 flex items-center gap-3">
+                <BookOpen className="text-warning h-5 w-5" />
+                <span className="text-muted-foreground text-sm">En cours</span>
               </div>
               <p className="text-3xl font-bold">{stats.readingBooks}</p>
             </CardContent>
           </Card>
           <Card className="card-ios">
             <CardContent className="p-4">
-              <div className="flex items-center gap-3 mb-2">
-                <TrendingUp className="h-5 w-5 text-primary" />
-                <span className="text-sm text-muted-foreground">Pages lues</span>
+              <div className="mb-2 flex items-center gap-3">
+                <TrendingUp className="text-primary h-5 w-5" />
+                <span className="text-muted-foreground text-sm">Pages lues</span>
               </div>
               <p className="text-3xl font-bold">{stats.pagesRead.toLocaleString()}</p>
             </CardContent>
           </Card>
           <Card className="card-ios">
             <CardContent className="p-4">
-              <div className="flex items-center gap-3 mb-2">
-                <Clock className="h-5 w-5 text-info" />
-                <span className="text-sm text-muted-foreground">Moy. pages</span>
+              <div className="mb-2 flex items-center gap-3">
+                <Clock className="text-info h-5 w-5" />
+                <span className="text-muted-foreground text-sm">Moy. pages</span>
               </div>
               <p className="text-3xl font-bold">{stats.avgPagesPerBook}</p>
             </CardContent>
@@ -251,8 +264,8 @@ export default function StatsPage() {
         <motion.div variants={item}>
           <Card className="card-ios">
             <CardHeader className="pb-2">
-              <CardTitle className="text-base flex items-center gap-2">
-                <Calendar className="h-5 w-5 text-muted-foreground" />
+              <CardTitle className="flex items-center gap-2 text-base">
+                <Calendar className="text-muted-foreground h-5 w-5" />
                 Livres par mois
               </CardTitle>
             </CardHeader>
@@ -302,7 +315,7 @@ export default function StatsPage() {
               </CardHeader>
               <CardContent>
                 <div className="flex items-center gap-4">
-                  <div className="w-32 h-32 flex-shrink-0">
+                  <div className="h-32 w-32 flex-shrink-0">
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
                         <Pie
@@ -323,11 +336,11 @@ export default function StatsPage() {
                     {stats.categoryData.map((cat, index) => (
                       <div key={cat.name} className="flex items-center gap-2">
                         <div
-                          className="w-3 h-3 rounded-full"
+                          className="h-3 w-3 rounded-full"
                           style={{ backgroundColor: CHART_COLORS[index % CHART_COLORS.length] }}
                         />
-                        <span className="text-sm flex-1 truncate">{cat.name}</span>
-                        <span className="text-sm text-muted-foreground">{cat.value}</span>
+                        <span className="flex-1 truncate text-sm">{cat.name}</span>
+                        <span className="text-muted-foreground text-sm">{cat.value}</span>
                       </div>
                     ))}
                   </div>
@@ -346,20 +359,20 @@ export default function StatsPage() {
             <CardContent>
               <div className="space-y-3">
                 {stats.ratingData.reverse().map((data) => {
-                  const maxCount = Math.max(...stats.ratingData.map(d => d.count));
+                  const maxCount = Math.max(...stats.ratingData.map((d) => d.count));
                   const percentage = maxCount > 0 ? (data.count / maxCount) * 100 : 0;
                   return (
                     <div key={data.rating} className="flex items-center gap-3">
-                      <span className="text-sm w-8 text-muted-foreground">{data.rating}</span>
-                      <div className="flex-1 bg-secondary rounded-full h-2 overflow-hidden">
+                      <span className="text-muted-foreground w-8 text-sm">{data.rating}</span>
+                      <div className="bg-secondary h-2 flex-1 overflow-hidden rounded-full">
                         <motion.div
-                          className="h-full bg-yellow-400 rounded-full"
+                          className="h-full rounded-full bg-yellow-400"
                           initial={{ width: 0 }}
                           animate={{ width: `${percentage}%` }}
                           transition={{ duration: 0.5, delay: 0.2 }}
                         />
                       </div>
-                      <span className="text-sm w-8 text-right text-muted-foreground">
+                      <span className="text-muted-foreground w-8 text-right text-sm">
                         {data.count}
                       </span>
                     </div>
@@ -372,15 +385,15 @@ export default function StatsPage() {
 
         {/* Reading Streak Placeholder */}
         <motion.div variants={item}>
-          <Card className="card-ios bg-gradient-to-br from-warning/10 to-transparent border-0">
+          <Card className="card-ios from-warning/10 border-0 bg-gradient-to-br to-transparent">
             <CardContent className="p-5">
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-full bg-warning/20 flex items-center justify-center">
-                  <Flame className="h-7 w-7 text-warning" />
+                <div className="bg-warning/20 flex h-14 w-14 items-center justify-center rounded-full">
+                  <Flame className="text-warning h-7 w-7" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-lg">Streak de lecture</h3>
-                  <p className="text-sm text-muted-foreground">
+                  <h3 className="text-lg font-semibold">Streak de lecture</h3>
+                  <p className="text-muted-foreground text-sm">
                     Commencez à tracker vos sessions de lecture
                   </p>
                 </div>
@@ -395,12 +408,12 @@ export default function StatsPage() {
 
 function StatsSkeleton() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background min-h-screen">
       <header className="px-5 pt-4 pb-2">
-        <Skeleton className="h-9 w-32 mb-2" />
+        <Skeleton className="mb-2 h-9 w-32" />
         <Skeleton className="h-4 w-48" />
       </header>
-      <div className="px-5 space-y-6">
+      <div className="space-y-6 px-5">
         <div className="flex gap-2">
           <Skeleton className="h-9 w-16 rounded-full" />
           <Skeleton className="h-9 w-16 rounded-full" />

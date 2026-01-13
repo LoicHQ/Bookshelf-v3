@@ -22,7 +22,10 @@ export const createBookSchema = z.object({
   pageCount: z.number().int().positive().optional().nullable(),
   categories: z.array(z.string()).optional().default([]),
   language: z.string().optional().nullable(),
-  status: z.enum(['TO_READ', 'READING', 'COMPLETED', 'ABANDONED', 'ON_HOLD']).optional().default('TO_READ'),
+  status: z
+    .enum(['TO_READ', 'READING', 'COMPLETED', 'ABANDONED', 'ON_HOLD'])
+    .optional()
+    .default('TO_READ'),
 });
 
 export type CreateBookInput = z.infer<typeof createBookSchema>;

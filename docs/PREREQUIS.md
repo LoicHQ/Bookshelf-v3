@@ -9,6 +9,7 @@ Ce document liste les prérequis techniques qui ne sont pas encore implémentés
 **Status** : ✅ Partiellement implémenté (`.env.example` créé)
 
 **À faire** :
+
 - [ ] Créer `.env.local` à partir de `.env.example`
 - [ ] Configurer toutes les variables d'environnement
 - [ ] Ajouter les secrets dans GitHub Secrets pour CI/CD
@@ -23,12 +24,14 @@ Ce document liste les prérequis techniques qui ne sont pas encore implémentés
 **Status** : ⚠️ Partiellement implémenté (workflow GitHub Actions basique)
 
 **À faire** :
+
 - [ ] Ajouter les variables d'environnement dans GitHub Secrets
 - [ ] Configurer les preview deployments sur Vercel
 - [ ] Ajouter un workflow pour les migrations Prisma en production
 - [ ] Configurer les notifications (Slack, email) pour les échecs de build
 
 **Fichiers concernés** :
+
 - `.github/workflows/ci.yml` (existant)
 - Configuration Vercel (à créer)
 
@@ -39,12 +42,14 @@ Ce document liste les prérequis techniques qui ne sont pas encore implémentés
 **Status** : ⚠️ Migrations Prisma non versionnées
 
 **À faire** :
+
 - [ ] Créer la migration initiale : `npx prisma migrate dev --name init`
 - [ ] Versionner les migrations dans `prisma/migrations/`
 - [ ] Documenter la stratégie de migration en production
 - [ ] Créer un script de rollback
 
 **Commandes** :
+
 ```bash
 # Créer une migration
 pnpm db:migrate
@@ -62,11 +67,13 @@ npx prisma migrate deploy
 **Status** : ❌ Non implémenté
 
 **À faire** :
+
 - [ ] Créer `prisma/seed.ts` avec des données de test
 - [ ] Ajouter script `seed` dans `package.json`
 - [ ] Documenter l'utilisation des seeds
 
 **Exemple** :
+
 ```typescript
 // prisma/seed.ts
 import { prisma } from '../src/lib/prisma';
@@ -88,12 +95,14 @@ main()
 **Status** : ❌ Non implémenté
 
 **À faire** :
+
 - [ ] Intégrer Sentry pour le tracking d'erreurs
 - [ ] Configurer Vercel Analytics pour les métriques
 - [ ] Ajouter un logging structuré (pino ou winston)
 - [ ] Configurer des alertes pour les erreurs critiques
 
 **Options recommandées** :
+
 - **Error Tracking** : Sentry (gratuit jusqu'à 5k events/mois)
 - **Analytics** : Vercel Analytics (inclus avec Vercel)
 - **Logging** : pino (léger) ou winston (plus de features)
@@ -105,6 +114,7 @@ main()
 **Status** : ⚠️ Partiellement implémenté (NextAuth basique)
 
 **À faire** :
+
 - [ ] Ajouter rate limiting sur les API routes
 - [ ] Configurer les headers de sécurité (helmet.js ou next.config.ts)
 - [ ] Implémenter la validation CSRF pour les formulaires
@@ -113,6 +123,7 @@ main()
 - [ ] Auditer les dépendances (npm audit, Snyk)
 
 **Packages recommandés** :
+
 ```bash
 npm install @upstash/ratelimit  # Rate limiting
 npm install helmet              # Security headers
@@ -127,6 +138,7 @@ npm install helmet              # Security headers
 **Status** : ❌ Non implémenté
 
 **À faire** :
+
 - [ ] Installer Playwright ou Cypress
 - [ ] Créer des tests E2E pour les flux critiques
 - [ ] Intégrer dans le pipeline CI/CD
@@ -145,11 +157,13 @@ npx playwright install
 **Status** : ❌ Non implémenté
 
 **À faire** :
+
 - [ ] Générer la documentation OpenAPI/Swagger
 - [ ] Documenter tous les endpoints API
 - [ ] Ajouter des exemples de requêtes/réponses
 
 **Options** :
+
 - Swagger UI avec `swagger-jsdoc`
 - Next.js API Routes avec annotations JSDoc
 
@@ -160,6 +174,7 @@ npx playwright install
 **Status** : ⚠️ Partiellement optimisé (requêtes Prisma avec select)
 
 **À faire** :
+
 - [ ] Implémenter un cache Redis pour les recherches fréquentes
 - [ ] Ajouter `revalidate` pour les données statiques
 - [ ] Optimiser les images avec Next.js Image
@@ -174,6 +189,7 @@ npx playwright install
 **Status** : ❌ Non implémenté
 
 **À faire** :
+
 - [ ] Configurer les backups automatiques Supabase
 - [ ] Documenter la procédure de restauration
 - [ ] Tester la procédure de backup/restore
@@ -187,6 +203,7 @@ npx playwright install
 **Status** : ❌ Non implémenté
 
 **À faire** :
+
 - [ ] Créer le dossier `docs/adr/`
 - [ ] Documenter les décisions architecturales importantes
 - [ ] Maintenir à jour lors des changements majeurs
@@ -200,6 +217,7 @@ npx playwright install
 **Status** : ❌ Non implémenté (application en français uniquement)
 
 **À faire** (si nécessaire) :
+
 - [ ] Installer next-intl ou react-i18next
 - [ ] Extraire tous les textes dans des fichiers de traduction
 - [ ] Ajouter le sélecteur de langue
@@ -224,18 +242,21 @@ Avant de déployer en production, vérifiez :
 ## Priorités recommandées
 
 ### Phase 1 - MVP Production (Minimum viable)
+
 1. Variables d'environnement ✅
 2. Migrations Prisma
 3. Configuration CI/CD basique
 4. Monitoring basique (Sentry)
 
 ### Phase 2 - Production stable
+
 5. Sécurité (rate limiting, headers)
 6. Seeds et données de test
 7. Tests E2E
 8. Documentation API
 
 ### Phase 3 - Optimisations
+
 9. Cache Redis
 10. Performance optimizations
 11. Backup strategy

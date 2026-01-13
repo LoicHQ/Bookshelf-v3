@@ -23,11 +23,35 @@ const STATUS_LABELS: Record<
   string,
   { label: string; variant: 'default' | 'secondary' | 'outline'; color: string }
 > = {
-  TO_READ: { label: 'À lire', variant: 'outline', color: 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-900/30' },
-  READING: { label: 'En cours', variant: 'default', color: 'bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-200 dark:border-orange-900/30' },
-  COMPLETED: { label: 'Lu', variant: 'secondary', color: 'bg-green-500/10 text-green-600 dark:text-green-400 border-green-200 dark:border-green-900/30' },
-  ABANDONED: { label: 'Abandonné', variant: 'outline', color: 'bg-red-500/10 text-red-600 dark:text-red-400 border-red-200 dark:border-red-900/30' },
-  ON_HOLD: { label: 'En pause', variant: 'outline', color: 'bg-gray-500/10 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-900/30' },
+  TO_READ: {
+    label: 'À lire',
+    variant: 'outline',
+    color:
+      'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-900/30',
+  },
+  READING: {
+    label: 'En cours',
+    variant: 'default',
+    color:
+      'bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-200 dark:border-orange-900/30',
+  },
+  COMPLETED: {
+    label: 'Lu',
+    variant: 'secondary',
+    color:
+      'bg-green-500/10 text-green-600 dark:text-green-400 border-green-200 dark:border-green-900/30',
+  },
+  ABANDONED: {
+    label: 'Abandonné',
+    variant: 'outline',
+    color: 'bg-red-500/10 text-red-600 dark:text-red-400 border-red-200 dark:border-red-900/30',
+  },
+  ON_HOLD: {
+    label: 'En pause',
+    variant: 'outline',
+    color:
+      'bg-gray-500/10 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-900/30',
+  },
 };
 
 export function BookCard({ book, onClick, showRating = true, showStatus = true }: BookCardProps) {
@@ -72,36 +96,36 @@ export function BookCard({ book, onClick, showRating = true, showStatus = true }
   return (
     <Card
       className={cn(
-        'overflow-hidden transition-ios glass-card shadow-ios-sm',
-        onClick && 'cursor-pointer hover:shadow-ios-md active:scale-[0.97]'
+        'transition-ios glass-card shadow-ios-sm overflow-hidden',
+        onClick && 'hover:shadow-ios-md cursor-pointer active:scale-[0.97]'
       )}
       onClick={onClick}
     >
       <CardContent className="p-0">
         <div className="flex gap-4 p-5">
           {/* Cover Image iOS-like */}
-          <div className="bg-secondary/50 relative h-36 w-28 flex-shrink-0 overflow-hidden rounded-2xl shadow-ios-sm border border-border/30">
+          <div className="bg-secondary/50 shadow-ios-sm border-border/30 relative h-36 w-28 flex-shrink-0 overflow-hidden rounded-2xl border">
             {coverImage ? (
               <Image
                 src={coverImage}
                 alt={bookInfo.title}
                 fill
-                className="object-cover transition-ios"
+                className="transition-ios object-cover"
                 sizes="112px"
               />
             ) : (
-              <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-secondary to-secondary/50">
+              <div className="from-secondary to-secondary/50 flex h-full w-full items-center justify-center bg-gradient-to-br">
                 <BookOpen className="text-muted-foreground/50 h-12 w-12" />
               </div>
             )}
             {/* Overlay gradient iOS-like */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent pointer-events-none" />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/5 to-transparent" />
           </div>
 
           {/* Book Info */}
           <div className="min-w-0 flex-1 space-y-3">
             <div className="space-y-1.5">
-              <h3 className="line-clamp-2 text-[18px] font-bold leading-tight tracking-tight">
+              <h3 className="line-clamp-2 text-[18px] leading-tight font-bold tracking-tight">
                 {bookInfo.title}
               </h3>
               <p className="text-muted-foreground line-clamp-1 text-[15px] font-medium">
@@ -115,7 +139,7 @@ export function BookCard({ book, onClick, showRating = true, showStatus = true }
                 <Badge
                   variant="outline"
                   className={cn(
-                    'px-3 py-1 text-[12px] font-semibold rounded-full border',
+                    'rounded-full border px-3 py-1 text-[12px] font-semibold',
                     STATUS_LABELS[userBookData.status]?.color || ''
                   )}
                 >
@@ -148,7 +172,7 @@ export function BookCard({ book, onClick, showRating = true, showStatus = true }
                   <Badge
                     key={category}
                     variant="outline"
-                    className="px-2.5 py-1 text-[11px] font-medium rounded-full bg-secondary/30 border-border/40 text-muted-foreground"
+                    className="bg-secondary/30 border-border/40 text-muted-foreground rounded-full px-2.5 py-1 text-[11px] font-medium"
                   >
                     {category}
                   </Badge>

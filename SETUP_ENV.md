@@ -3,6 +3,7 @@
 ## Instructions
 
 1. Copiez le fichier `.env.example` vers `.env.local` :
+
    ```bash
    cp .env.example .env.local
    ```
@@ -59,6 +60,39 @@
 3. Créez une clé API
 4. Collez la clé dans `GOOGLE_BOOKS_API_KEY`
 
+### APIs de couvertures légales (Recommandé pour fantasy/romantasy)
+
+#### Babelio API (Recommandé)
+
+1. Créez un compte sur [Babelio](https://www.babelio.com)
+2. Demandez une clé API gratuite sur [Babelio API](https://www.babelio.com/api)
+3. Collez la clé dans `BABELIO_API_KEY`
+4. **Avantage** : Spécialisé dans les livres français, excellent pour fantasy et romantasy
+
+#### Internet Archive (Gratuit, sans clé requise)
+
+1. Aucune configuration nécessaire
+2. L'API est publique : [Internet Archive API](https://archive.org/services/docs/api/)
+3. `INTERNET_ARCHIVE_API_KEY` peut rester vide
+
+#### LibraryThing API (Optionnel)
+
+1. Créez un compte sur [LibraryThing](https://www.librarything.com)
+2. Demandez une clé développeur gratuite
+3. Collez la clé dans `LIBRARYTHING_API_KEY`
+
+#### ISBNdb (Optionnel, quota limité)
+
+1. Créez un compte sur [ISBNdb](https://isbndb.com)
+2. Générez une clé API (plan gratuit limité à 500 requêtes/mois)
+3. Collez la clé dans `ISBNDB_API_KEY`
+
+### Cloudinary (Optionnel, pour upload de couvertures)
+
+1. Créez un compte sur [Cloudinary](https://cloudinary.com)
+2. Copiez votre **Cloud Name** dans `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`
+3. Créez un **Upload Preset** (non signé) et collez son nom dans `NEXT_PUBLIC_CLOUDINARY_PRESET`
+
 ## Vérification
 
 Après configuration, vérifiez que toutes les variables sont définies :
@@ -74,6 +108,7 @@ grep -v "SECRET\|KEY" .env.local
 ## Sécurité
 
 ⚠️ **IMPORTANT** :
+
 - Ne commitez **JAMAIS** `.env.local` dans Git
 - Le fichier `.env.local` est déjà dans `.gitignore`
 - Utilisez des secrets différents pour chaque environnement

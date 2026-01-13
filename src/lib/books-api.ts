@@ -3,38 +3,11 @@
  * API client pour la recherche de livres via Google Books et Open Library
  */
 import type { BookSearchResult, GoogleBooksVolume, OpenLibraryBook } from '@/types';
+import { normalizeISBN } from './isbn-utils';
+import { searchBookInDatabase } from './db-book-search';
 
 const GOOGLE_BOOKS_API = 'https://www.googleapis.com/books/v1/volumes';
 const OPEN_LIBRARY_API = 'https://openlibrary.org';
-
-/**
- * Normalise et valide un ISBN
- * - Retire les espaces et tirets
- * - Corrige les erreurs courantes (ISBN trop long se terminant par 0)
- * - Valide la longueur (ISBN-10 = 10, ISBN-13 = 13)
- */
-function normalizeISBN(isbn: string): string | null {
-  // Nettoyer l'ISBN (retirer les tirets et espaces)
-  let cleanISBN = isbn.replace(/[-\s]/g, '');
-
-  // Si l'ISBN a 14 chiffres et se termine par 0, retirer le dernier 0
-  // (erreur courante de saisie)
-  if (cleanISBN.length === 14 && cleanISBN.endsWith('0')) {
-    cleanISBN = cleanISBN.slice(0, 13);
-  }
-
-  // Valider la longueur (ISBN-10 ou ISBN-13)
-  if (cleanISBN.length !== 10 && cleanISBN.length !== 13) {
-    return null;
-  }
-
-  // Vérifier que ce sont uniquement des chiffres (ISBN-13 peut commencer par 978 ou 979)
-  if (!/^\d+$/.test(cleanISBN)) {
-    return null;
-  }
-
-  return cleanISBN;
-}
 
 /**
  * Recherche des livres via Google Books API
@@ -61,19 +34,26 @@ export async function searchGoogleBooks(
 }
 
 /**
- * Recherche un livre par ISBN via Google Books
+ * Recherche un livre par ISBN avec priorité BDD locale
  */
 export async function fetchBookByISBN(isbn: string): Promise<BookSearchResult | null> {
-  // Normaliser l'ISBN
-  const normalizedISBN = normalizeISBN(isbn);
-  
-  if (!normalizedISBN) {
+  // 1. Normaliser l'ISBN
+  const { isbn10, isbn13, isValid } = normalizeISBN(isbn);
+
+  if (!isValid) {
     throw new Error(`ISBN invalide: "${isbn}". Un ISBN doit contenir 10 ou 13 chiffres.`);
   }
 
-  // Essayer Google Books d'abord
+  // 2. Recherche en BDD d'abord
+  const dbResult = await searchBookInDatabase(isbn10, isbn13);
+  if (dbResult) {
+    return dbResult;
+  }
+
+  // 3. Essayer Google Books
+  const targetISBN = isbn13 || isbn10!;
   try {
-    const googleResult = await searchGoogleBooks(`isbn:${normalizedISBN}`, 1);
+    const googleResult = await searchGoogleBooks(`isbn:${targetISBN}`, 1);
     if (googleResult.length > 0) {
       return googleResult[0];
     }
@@ -81,9 +61,9 @@ export async function fetchBookByISBN(isbn: string): Promise<BookSearchResult | 
     console.error('Google Books error:', error);
   }
 
-  // Fallback sur Open Library
+  // 4. Fallback sur Open Library
   try {
-    const olResult = await fetchFromOpenLibrary(normalizedISBN);
+    const olResult = await fetchFromOpenLibrary(targetISBN);
     if (olResult) {
       return olResult;
     }
@@ -171,13 +151,26 @@ function mapGoogleBookToResult(volume: GoogleBooksVolume): BookSearchResult {
   const isbn10 = identifiers.find((id) => id.type === 'ISBN_10')?.identifier;
   const isbn13 = identifiers.find((id) => id.type === 'ISBN_13')?.identifier;
 
+  // Utiliser la meilleure qualité d'image disponible
+  const imageLinks = volumeInfo.imageLinks || {};
+  const coverImage =
+    imageLinks.extraLarge?.replace('http:', 'https:') ||
+    imageLinks.large?.replace('http:', 'https:') ||
+    imageLinks.medium?.replace('http:', 'https:') ||
+    imageLinks.thumbnail?.replace('http:', 'https:') ||
+    imageLinks.smallThumbnail?.replace('http:', 'https:');
+
+  const thumbnail =
+    imageLinks.smallThumbnail?.replace('http:', 'https:') ||
+    imageLinks.thumbnail?.replace('http:', 'https:');
+
   return {
     id: volume.id,
     title: volumeInfo.title,
     authors: volumeInfo.authors || [],
     description: volumeInfo.description,
-    coverImage: volumeInfo.imageLinks?.thumbnail?.replace('http:', 'https:'),
-    thumbnail: volumeInfo.imageLinks?.smallThumbnail?.replace('http:', 'https:'),
+    coverImage: coverImage || undefined,
+    thumbnail: thumbnail || undefined,
     publishedDate: volumeInfo.publishedDate,
     publisher: volumeInfo.publisher,
     pageCount: volumeInfo.pageCount,
@@ -193,6 +186,21 @@ function mapOpenLibraryToResult(book: OpenLibraryBook, isbn: string): BookSearch
 
   const coverId = book.covers?.[0];
 
+  // Extraire publisher (peut être string ou objet avec name)
+  const publisher = book.publishers?.[0];
+  const publisherString =
+    typeof publisher === 'string' ? publisher : (publisher as { name?: string })?.name || undefined;
+
+  // Extraire categories (peut être string[] ou objet[] avec name)
+  const categories =
+    book.subjects
+      ?.slice(0, 5)
+      .map((subj) =>
+        typeof subj === 'string'
+          ? subj
+          : (subj as { name?: string })?.name || (subj as { value?: string })?.value || String(subj)
+      ) || [];
+
   return {
     id: `ol-${isbn}`,
     title: book.title,
@@ -201,9 +209,9 @@ function mapOpenLibraryToResult(book: OpenLibraryBook, isbn: string): BookSearch
     coverImage: coverId ? `https://covers.openlibrary.org/b/id/${coverId}-L.jpg` : undefined,
     thumbnail: coverId ? `https://covers.openlibrary.org/b/id/${coverId}-M.jpg` : undefined,
     publishedDate: book.publish_date,
-    publisher: book.publishers?.[0],
+    publisher: publisherString,
     pageCount: book.number_of_pages,
-    categories: book.subjects?.slice(0, 5),
+    categories,
     isbn: book.isbn_10?.[0] || isbn,
     isbn13: book.isbn_13?.[0],
   };
