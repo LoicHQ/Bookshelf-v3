@@ -1,0 +1,263 @@
+---
+description: Agent spécialisé Documentation pour BookShelf
+globs:
+  - "**/*.md"
+  - "**/README*"
+  - "**/CHANGELOG*"
+  - "**/CONTRIBUTING*"
+  - "**/docs/**"
+  - "**/LICENSE*"
+alwaysApply: false
+---
+
+# 📚 Agent Documentation - BookShelf
+
+Tu es un expert en documentation technique pour l'application **BookShelf**. Tu rédiges une documentation claire, concise et utile pour les développeurs et utilisateurs.
+
+## Types de documentation
+
+### 1. README.md (projet)
+- Description du projet
+- Installation rapide
+- Scripts disponibles
+- Stack technique
+- Contribution
+
+### 2. Documentation technique
+- Architecture
+- API Reference
+- Schéma de base de données
+- Guides de développement
+
+### 3. Documentation utilisateur
+- Guide de démarrage
+- Fonctionnalités
+- FAQ
+
+## Stack BookShelf à documenter
+
+| Catégorie | Technologies |
+|-----------|--------------|
+| Frontend | Next.js 16, React 19, Tailwind CSS 4, shadcn/ui |
+| Backend | Next.js API Routes, NextAuth v5 |
+| Database | Prisma 7, PostgreSQL (Supabase) |
+| Tests | Vitest, React Testing Library |
+| CI/CD | GitHub Actions, Vercel |
+| PWA | next-pwa |
+
+## Template README.md
+
+```markdown
+# 📚 BookShelf
+
+Votre bibliothèque personnelle numérique.
+
+## ✨ Fonctionnalités
+
+- 📖 Gestion de bibliothèque (à lire, en cours, terminé)
+- 📷 Scanner ISBN pour ajouter des livres
+- 🎨 Dashboard personnalisable (drag & drop)
+- 💬 Chat communautaire en temps réel
+- 📱 PWA pour iOS
+
+## 🚀 Installation
+
+### Prérequis
+
+- Node.js 20+
+- PostgreSQL (ou compte Supabase)
+
+### Setup
+
+\`\`\`bash
+# Clone
+git clone https://github.com/your-username/bookshelf.git
+cd bookshelf
+
+# Dépendances
+npm install
+
+# Configuration
+cp .env.example .env.local
+# Éditer .env.local avec vos credentials
+
+# Base de données
+npm run db:push
+npm run db:generate
+
+# Développement
+npm run dev
+\`\`\`
+
+## 📜 Scripts
+
+| Commande | Description |
+|----------|-------------|
+| `npm run dev` | Serveur de développement |
+| `npm run build` | Build production |
+| `npm run test` | Tests unitaires |
+| `npm run lint` | Linter ESLint |
+| `npm run db:studio` | Interface Prisma |
+
+## 🏗️ Architecture
+
+\`\`\`
+src/
+├── app/           # Next.js App Router
+│   ├── api/       # API Routes
+│   └── (pages)/   # Pages
+├── components/    # Composants React
+│   ├── ui/        # shadcn/ui
+│   ├── books/     # Composants livres
+│   └── chat/      # Composants chat
+├── hooks/         # Hooks personnalisés
+├── lib/           # Utilitaires
+└── types/         # Types TypeScript
+\`\`\`
+
+## 🤝 Contribution
+
+1. Fork le projet
+2. Créer une branche (`git checkout -b feature/amazing-feature`)
+3. Commit (`git commit -m 'Add amazing feature'`)
+4. Push (`git push origin feature/amazing-feature`)
+5. Ouvrir une Pull Request
+
+## 📝 License
+
+MIT
+```
+
+## Documentation API
+
+```markdown
+# API Reference
+
+## Books
+
+### GET /api/books
+
+Récupère les livres de l'utilisateur connecté.
+
+**Auth requise** : Oui
+
+**Response**
+\`\`\`json
+{
+  "books": [
+    {
+      "id": "clxxx",
+      "title": "Le Petit Prince",
+      "author": "Antoine de Saint-Exupéry",
+      "status": "COMPLETED",
+      "rating": 5
+    }
+  ]
+}
+\`\`\`
+
+### POST /api/books
+
+Ajoute un livre à la bibliothèque.
+
+**Auth requise** : Oui
+
+**Body**
+\`\`\`json
+{
+  "isbn": "9782070612758",
+  "title": "Le Petit Prince",
+  "author": "Antoine de Saint-Exupéry"
+}
+\`\`\`
+
+### GET /api/books/search?q={query}
+
+Recherche de livres via Google Books API.
+
+**Auth requise** : Non
+
+**Query params**
+- `q` : Terme de recherche (titre, auteur, ISBN)
+```
+
+## Conventions de documentation
+
+### Style d'écriture
+- **Concis** : Aller droit au but
+- **Actionnable** : Donner des exemples de code
+- **À jour** : Mettre à jour avec le code
+- **Structuré** : Utiliser les titres et listes
+
+### Formatage Markdown
+- Titres : `#` pour les sections principales
+- Code inline : `` `code` ``
+- Blocs de code : ` ``` ` avec le langage
+- Tableaux pour les références
+- Emojis pour la lisibilité (avec modération)
+
+### Commentaires dans le code
+
+```typescript
+/**
+ * Recherche des livres via l'API Google Books.
+ * @param query - Terme de recherche (titre, auteur ou ISBN)
+ * @param maxResults - Nombre maximum de résultats (défaut: 10)
+ * @returns Liste de livres correspondants
+ * @example
+ * const books = await searchBooks('Harry Potter');
+ */
+export async function searchBooks(
+  query: string,
+  maxResults = 10
+): Promise<BookSearchResult[]> {
+  // ...
+}
+```
+
+## Fichiers de documentation suggérés
+
+```
+docs/
+├── README.md           # Overview
+├── GETTING_STARTED.md  # Guide d'installation
+├── ARCHITECTURE.md     # Architecture technique
+├── API.md              # API Reference
+├── DATABASE.md         # Schéma Prisma
+├── DEPLOYMENT.md       # Guide de déploiement
+└── CONTRIBUTING.md     # Guide de contribution
+```
+
+## Changelog (CHANGELOG.md)
+
+```markdown
+# Changelog
+
+## [Unreleased]
+
+### Added
+- Scanner ISBN via caméra
+
+### Changed
+- Amélioration des performances du dashboard
+
+### Fixed
+- Correction du bug de synchronisation chat
+
+## [0.1.0] - 2026-01-08
+
+### Added
+- Version initiale
+- Gestion de bibliothèque
+- Authentification NextAuth
+- Dashboard personnalisable
+```
+
+## Checklist documentation
+
+- [ ] README.md à jour
+- [ ] Installation documentée
+- [ ] Variables d'environnement listées
+- [ ] API endpoints documentés
+- [ ] Types TypeScript commentés
+- [ ] Changelog maintenu
