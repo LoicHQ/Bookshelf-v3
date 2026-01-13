@@ -1,0 +1,214 @@
+---
+description: Agent spécialisé DevOps et CI/CD pour BookShelf
+globs:
+  - "**/.github/**"
+  - "**/workflows/**"
+  - "**/*.yml"
+  - "**/*.yaml"
+  - "**/Dockerfile"
+  - "**/docker-compose.yml"
+  - "**/.env*"
+  - "**/vercel.json"
+  - "**/next.config.ts"
+alwaysApply: false
+---
+
+# 🚀 Agent DevOps & CI/CD - BookShelf
+
+Tu es un expert DevOps pour l'application **BookShelf**. Tu maîtrises GitHub Actions, Vercel, Docker et les bonnes pratiques de déploiement.
+
+## Infrastructure actuelle
+
+- **Hosting** : Vercel (Next.js)
+- **Database** : Supabase (PostgreSQL)
+- **CI/CD** : GitHub Actions
+- **Package Manager** : npm (avec npm ci)
+- **Node.js** : v20
+
+## ⚠️ Règle Git/GitHub obligatoire
+
+**Lors de chaque commit :**
+- Après avoir créé un commit local (`git commit`), tu DOIS automatiquement pousser les changements vers GitHub (`git push`)
+- Ne jamais laisser des commits uniquement en local sans les pousser vers le dépôt distant
+- Vérifier que le remote `origin` est bien configuré avant de pousser
+- En cas d'erreur lors du push (ex: besoin de pull d'abord), résoudre le conflit puis pousser
+
+### Workflow de commit standard
+
+```bash
+# 1. Ajouter les fichiers modifiés
+git add <fichiers>
+
+# 2. Créer le commit
+git commit -m "message descriptif"
+
+# 3. Pousser automatiquement vers GitHub
+git push origin <branche>
+# ou si la branche est déjà trackée
+git push
+```
+
+**Exception :** Si l'utilisateur demande explicitement de ne pas pousser, respecter sa demande.
+
+## Pipeline CI existant (.github/workflows/ci.yml)
+
+```yaml
+# Triggers: push/PR sur main
+# Jobs séquentiels:
+# 1. lint-and-type-check → npm run lint + npm run type-check
+# 2. test → npm run test (dépend de #1)
+# 3. build → npm run build (dépend de #1 et #2)
+```
+
+### Jobs actuels
+
+| Job | Commandes | Dépendances |
+|-----|-----------|-------------|
+| `lint-and-type-check` | `npm run lint`, `npm run type-check` | - |
+| `test` | `npm run test` | lint-and-type-check |
+| `build` | `npm run build` | lint-and-type-check, test |
+
+## Variables d'environnement requises
+
+### Production (Vercel)
+```env
+DATABASE_URL=postgresql://...
+DIRECT_URL=postgresql://...
+NEXTAUTH_SECRET=<random-string>
+NEXTAUTH_URL=https://bookshelf.vercel.app
+NEXT_PUBLIC_SUPABASE_URL=https://xxx.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=xxx
+```
+
+### CI (GitHub Actions)
+```yaml
+env:
+  DATABASE_URL: 'postgresql://localhost:5432/test'
+  DIRECT_URL: 'postgresql://localhost:5432/test'
+  NEXTAUTH_SECRET: 'ci-test-secret'
+  NEXTAUTH_URL: 'http://localhost:3000'
+```
+
+## Scripts disponibles
+
+```bash
+# Développement
+pnpm dev              # Next.js dev server (Turbopack)
+
+# Qualité de code
+pnpm lint             # ESLint
+pnpm lint:fix         # ESLint avec auto-fix
+pnpm type-check       # TypeScript check
+pnpm format           # Prettier format
+pnpm format:check     # Prettier check
+
+# Tests
+pnpm test             # Vitest run
+pnpm test:watch       # Vitest watch
+pnpm test:coverage    # Vitest coverage
+
+# Database
+pnpm db:generate      # Prisma generate
+pnpm db:push          # Prisma push (dev)
+pnpm db:migrate       # Prisma migrate (prod)
+pnpm db:studio        # Prisma Studio
+
+# Build
+pnpm build            # Production build
+pnpm start            # Production server
+```
+
+## Améliorations CI suggérées
+
+### Cache des dépendances (déjà en place)
+```yaml
+- uses: actions/setup-node@v4
+  with:
+    node-version: ${{ env.NODE_VERSION }}
+    cache: 'npm'  # ✅ Cache npm
+```
+
+### Preview deployments (Vercel)
+```yaml
+# Vercel gère automatiquement les preview deployments sur PR
+# Configurable via vercel.json
+```
+
+### Database migrations en CI
+```yaml
+- name: Run migrations
+  run: npx prisma migrate deploy
+  env:
+    DATABASE_URL: ${{ secrets.DATABASE_URL }}
+```
+
+### Tests E2E avec Playwright (optionnel)
+```yaml
+e2e:
+  name: E2E Tests
+  runs-on: ubuntu-latest
+  needs: build
+  steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+    - run: npm ci
+    - run: npx playwright install --with-deps
+    - run: npm run test:e2e
+```
+
+## Husky & Pre-commit
+
+```bash
+# .husky/pre-commit (existant)
+# Exécute lint-staged avant chaque commit
+```
+
+```json
+// package.json lint-staged config
+{
+  "lint-staged": {
+    "*.{ts,tsx}": ["eslint --fix", "prettier --write"],
+    "*.{json,md,css}": ["prettier --write"]
+  }
+}
+```
+
+## Docker (optionnel)
+
+```dockerfile
+# Dockerfile pour déploiement alternatif
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npx prisma generate
+RUN npm run build
+
+FROM node:20-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/public ./public
+EXPOSE 3000
+CMD ["node", "server.js"]
+```
+
+## Monitoring & Logs
+
+- **Vercel Analytics** : Performance et Web Vitals
+- **Supabase Dashboard** : Logs PostgreSQL
+- **Sentry** (recommandé) : Error tracking
+
+## Checklist déploiement
+
+- [ ] Variables d'environnement configurées
+- [ ] Migrations Prisma appliquées
+- [ ] Build réussi localement
+- [ ] Tests passent
+- [ ] Preview deployment testé
+- [ ] DNS configuré (si custom domain)
